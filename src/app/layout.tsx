@@ -15,37 +15,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <html lang="pt-BR" suppressHydrationWarning>
-        <head />
-
-        <body>
-          <menu className="flex justify-between p-2">
-            <div className="flex items-center">
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <header className="flex justify-between p-2 border-b">
+            <div className="flex items-center gap-2">
               <h2 className="w-[200px] px-2 text-center bg-gray-200">LOGO</h2>
               <NavBar />
             </div>
 
-            <div className="flex items-center px-2">
+            <div className="flex items-center px-2 gap-2">
               <h2>ICON</h2>
               <ModeToggle />
             </div>
-          </menu>
+          </header>
 
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
+          <main className="flex-1">{children}</main>
 
-          <footer>
+          <footer className="p-4 border-t">
             <h2>footer</h2>
           </footer>
-        </body>
-      </html>
-    </>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
