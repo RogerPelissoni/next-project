@@ -15,15 +15,15 @@ export const menuConfig: MenuItem[] = [
   {
     label: "Cadastros",
     children: [
-      { label: "Usuários", href: "/usuarios" },
-      { label: "Perfis", href: "/perfis" },
+      { label: "Usuários", href: "/user" },
+      { label: "Perfis", href: "/profile" },
     ],
   },
   {
     label: "Relatórios",
     children: [
-      { label: "Usuários", href: "/relatorios/usuarios" },
-      { label: "Perfis", href: "/relatorios/perfis" },
+      { label: "Usuários", href: "/report/user" },
+      { label: "Perfis", href: "/report/profile" },
     ],
   },
 ];
