@@ -23,7 +23,7 @@ export default function CoreCardComponent({
   return (
     <div className="flex">
       <Card className="w-full m-6 pt-0 gap-0">
-        <CardHeader className="flex justify-between items-center my-2">
+        <CardHeader className="flex justify-between items-center my-4">
           <CardTitle>{title}</CardTitle>
 
           <CardAction>{actions}</CardAction>
