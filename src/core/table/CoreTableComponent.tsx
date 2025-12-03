@@ -1,17 +1,93 @@
 "use client";
 
 import { useReactTable, getCoreRowModel, flexRender, type ColumnDef, type SortingState } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form } from "@/components/ui/form";
+import { CoreInputComponent } from "@/components/core/coreInput.component";
+import { CoreSelectComponent } from "@/components/core/coreSelect.component";
+import { CoreDateComponent } from "@/components/core/coreDate.component";
+import CoreButtonComponent from "@/components/core/coreButton.component";
 import { useCoreTable } from "./useCoreTable";
 
 export function CoreTableComponent<TData>() {
   const { data, columns, loading, totalRecords, pagination, setPagination, sorting, setSorting, filters, setFilters, filterConfig } = useCoreTable<TData>();
-  const [filterValues, setFilterValues] = useState<Record<string, string>>({});
+  
+  // Criar schema Zod dinâmico baseado no filterConfig
+  const createFilterSchema = () => {
+    if (!filterConfig || Object.keys(filterConfig).length === 0) {
+      return z.object({});
+    }
+
+    const schemaObject: Record<string, z.ZodSchema> = {};
+
+    Object.entries(filterConfig).forEach(([columnId, config]) => {
+      // String vazio é opcional (filtro pode estar vazio)
+      let field: z.ZodSchema = z.string().optional();
+
+      switch (config.type) {
+        case "number":
+          field = z.coerce.number().optional();
+          break;
+        case "date":
+          field = z.string().optional();
+          break;
+        case "select":
+          field = z.string().optional();
+          break;
+        case "boolean":
+          field = z.boolean().optional();
+          break;
+        default:
+          field = z.string().optional();
+      }
+
+      schemaObject[columnId] = field;
+    });
+
+    return z.object(schemaObject);
+  };
+
+  const filterSchema = createFilterSchema();
+  type FilterFormValues = z.infer<typeof filterSchema>;
+
+  // Form para filtros com Zod
+  const filterForm = useForm<FilterFormValues>({
+    resolver: zodResolver(filterSchema),
+    defaultValues: Object.keys(filterConfig || {}).reduce(
+      (acc, key) => ({ ...acc, [key]: "" }),
+      {}
+    ) as FilterFormValues,
+    mode: "onChange",
+  });
+
+  // Track previous filter values to avoid unnecessary updates
+  const handleFilterClick = () => {
+    const currentValues = filterForm.getValues();
+    const newFilters: typeof filters = [];
+
+    Object.entries(currentValues).forEach(([columnId, val]) => {
+      if (val !== "" && val !== undefined && val !== null) {
+        const matchMode = filterConfig?.[columnId]?.matchMode;
+        newFilters.push({ columnId, value: String(val), matchMode });
+      }
+    });
+
+    setFilters(newFilters);
+  };
+
+  // Handle Enter key press in text inputs
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleFilterClick();
+    }
+  };
 
   const memoColumns = useMemo(() => columns as ColumnDef<TData>[], [columns]);
   const memoData = useMemo(() => data, [data]);
@@ -37,81 +113,52 @@ export function CoreTableComponent<TData>() {
 
   const pageCount = Math.ceil(totalRecords / pagination.pageSize);
 
-  const handleFilterChange = (columnId: string, value: string) => {
-    setFilterValues((prev) => ({
-      ...prev,
-      [columnId]: value,
-    }));
-
-    if (value === "" || value === undefined) {
-      setFilters(filters.filter((f) => f.columnId !== columnId));
-    } else {
-        const matchMode = filterConfig?.[columnId]?.matchMode;
-      const existingFilter = filters.find((f) => f.columnId === columnId);
-      if (existingFilter) {
-        setFilters(
-          filters.map((f) => (f.columnId === columnId ? { ...f, value, matchMode } : f))
-        );
-      } else {
-        setFilters([...filters, { columnId, value, matchMode }]);
-      }
-    }
-  };
-
-  const renderFilterInput = (columnId: string) => {
+  const renderFilterField = (columnId: string) => {
     const config = filterConfig?.[columnId];
     if (!config) return null;
 
-    const currentValue = filterValues[columnId] || "";
+    const commonProps = {
+      control: filterForm.control as any,
+      name: columnId as any,
+      label: config.label,
+      placeholder: config.placeholder || `Filtrar ${config.label || columnId}`,
+    };
 
     switch (config.type) {
       case "text":
         return (
-          <Input
-            key={`filter-${columnId}`}
-            placeholder={config.placeholder || `Filtrar ${config.label || columnId}`}
-            value={currentValue}
-            onChange={(e) => handleFilterChange(columnId, e.target.value)}
-            className="h-9"
-          />
-        );
-
-      case "select":
-        return (
-          <Select key={`filter-${columnId}`} value={currentValue} onValueChange={(value) => handleFilterChange(columnId, value)}>
-            <SelectTrigger className="h-9">
-              <SelectValue placeholder={config.placeholder || `Selecionar ${config.label || columnId}`} />
-            </SelectTrigger>
-            <SelectContent>
-              {config.options?.map((opt) => (
-                <SelectItem key={opt.value} value={String(opt.value)}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div key={`filter-${columnId}`} onKeyDown={handleKeyDown}>
+            <CoreInputComponent
+              {...commonProps}
+              type="text"
+            />
+          </div>
         );
 
       case "number":
         return (
-          <Input
+          <div key={`filter-${columnId}`} onKeyDown={handleKeyDown}>
+            <CoreInputComponent
+              {...commonProps}
+              type="number"
+            />
+          </div>
+        );
+
+      case "select":
+        return (
+          <CoreSelectComponent
             key={`filter-${columnId}`}
-            type="number"
-            placeholder={config.placeholder || `Filtrar ${config.label || columnId}`}
-            value={currentValue}
-            onChange={(e) => handleFilterChange(columnId, e.target.value)}
-            className="h-9"
+            {...commonProps}
+            options={(config.options ?? []) as Array<{ label: string; value: string }>}
           />
         );
 
       case "date":
         return (
-          <Input
+          <CoreDateComponent
             key={`filter-${columnId}`}
-            type="date"
-            value={currentValue}
-            onChange={(e) => handleFilterChange(columnId, e.target.value)}
-            className="h-9"
+            {...commonProps}
           />
         );
 
@@ -124,16 +171,24 @@ export function CoreTableComponent<TData>() {
     <div className="mt-6 space-y-4">
       {/* Filtros */}
       {filterConfig && Object.keys(filterConfig).length > 0 && (
-        <div className="border rounded-md p-4 bg-muted/30">
-          <h3 className="text-sm font-semibold mb-3">Filtros</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {Object.entries(filterConfig).map(([columnId]) => (
-              <div key={columnId} className="flex flex-col gap-1">
-                {renderFilterInput(columnId)}
-              </div>
-            ))}
+        <Form {...filterForm}>
+          <div className="border rounded-md p-4 bg-muted/30">
+            <h3 className="text-sm font-semibold mb-3">Filtros</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {Object.entries(filterConfig).map(([columnId]) => (
+                <div key={columnId} className="flex flex-col gap-1">
+                  {renderFilterField(columnId)}
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end mt-4">
+              <CoreButtonComponent 
+                label="Filtrar" 
+                onClick={handleFilterClick}
+              />
+            </div>
           </div>
-        </div>
+        </Form>
       )}
 
       {/* Loading state */}
