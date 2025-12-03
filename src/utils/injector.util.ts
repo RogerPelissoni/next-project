@@ -1,4 +1,4 @@
-import { FormFieldsInterface, TableColumnInterface } from "@/types/core.types";
+import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/types/core.types";
 import { _assign, _get, _pick } from "./lodash.util";
 
 // FormFields
@@ -31,6 +31,29 @@ export function injectOnFormFields(formFields: FormFieldsInterface<any, any>, fo
 function applyInjectionFormFields(target: Record<string, any>, source: FormFieldsInjectorSingle) {
   const formFieldsInjectorKeys = ["options", "onChange"] satisfies (keyof FormFieldsInjectorSingle)[];
   _assign(target, _pick(source, formFieldsInjectorKeys));
+}
+
+// FilterFields
+export interface FilterFieldsInjectorInterface {
+  [key: string]: FilterFieldsInjectorSingle;
+}
+
+export interface FilterFieldsInjectorSingle {
+  options?: object[];
+}
+
+export function injectOnFilterFields(filterFields: TableFiltersInterface, injectionParams: FilterFieldsInjectorInterface): void {
+  for (const keyField in filterFields) {
+    const sInjectionParam = _get(injectionParams, [keyField]);
+    if (!sInjectionParam) continue;
+
+    applyInjectionFilterFields(filterFields[keyField]!, sInjectionParam);
+  }
+}
+
+function applyInjectionFilterFields(target: Record<string, any>, source: FilterFieldsInjectorSingle) {
+  const tableColumnsInjectorKeys = ["options"] satisfies (keyof FilterFieldsInjectorSingle)[];
+  _assign(target, _pick(source, tableColumnsInjectorKeys));
 }
 
 // TableColumns

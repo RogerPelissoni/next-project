@@ -1,41 +1,22 @@
 import { UserFormSchema, userSchema } from "@/schemas/user.schema";
 import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/types/core.types";
-import { FormFieldsInjectorInterface } from "@/utils/injector.util";
+import { KeyValueType, toOptions } from "@/utils/core.util";
+import { FormFieldsInjectorInterface, TableColumnsInjectorInterface } from "@/utils/injector.util";
 
 export const tableColumns: TableColumnInterface = [
   { accessorKey: "id", header: "#" },
   { accessorKey: "name", header: "Nome" },
   { accessorKey: "email", header: "Email" },
-  { accessorKey: "ds_person", header: "Pessoa" },
-  { accessorKey: "ds_profile", header: "Perfil" },
-  { accessorKey: "ds_company", header: "Empresa" },
+  { accessorKey: "person_id", header: "Pessoa" },
+  { accessorKey: "profile_id", header: "Perfil" },
+  { accessorKey: "company_id", header: "Empresa" },
 ];
 
 export const tableFilters: TableFiltersInterface = {
-  name: {
-    type: "text",
-    label: "Nome",
-    placeholder: "Filtrar por nome",
-    matchMode: "like",
-  },
-  email: {
-    type: "text",
-    label: "Email",
-    placeholder: "Filtrar por email",
-    matchMode: "like",
-  },
-  ds_profile: {
-    type: "select",
-    label: "Perfil",
-    placeholder: "Selecionar perfil",
-    matchMode: "equals",
-  },
-  ds_company: {
-    type: "select",
-    label: "Empresa",
-    placeholder: "Selecionar empresa",
-    matchMode: "equals",
-  },
+  name: { type: "text", label: "Nome", matchMode: "like" },
+  email: { type: "text", label: "Email", matchMode: "like" },
+  profile_id: { type: "select", label: "Perfil", matchMode: "equals" },
+  company_id: { type: "select", label: "Empresa", matchMode: "equals" },
 };
 
 export const formState: UserFormSchema = {
@@ -63,22 +44,20 @@ export const formFields: FormFieldsInterface<"main", UserFormSchema> = {
 };
 
 export const injectors = {
-  formFields: (obProfile: any[], obCompany: any[], obPerson: any[]): FormFieldsInjectorInterface => ({
-    profile_id: {
-      options: [{ value: "1", label: "teste" }],
-    },
-    company_id: {
-      options: obCompany.map((c) => ({
-        label: c.name ?? c.label,
-        value: c.id ?? c.value,
-      })),
-    },
-    person_id: {
-      options: obPerson.map((p) => ({
-        label: p.name ?? p.label,
-        value: p.id ?? p.value,
-      })),
-    },
+  formFields: (kvProfile: KeyValueType, kvCompany: KeyValueType, kvPerson: KeyValueType): FormFieldsInjectorInterface => ({
+    profile_id: { options: toOptions(kvProfile) },
+    company_id: { options: toOptions(kvCompany) },
+    person_id: { options: toOptions(kvPerson) },
+  }),
+  tableColumns: (kvProfile: KeyValueType, kvCompany: KeyValueType, kvPerson: KeyValueType): TableColumnsInjectorInterface => ({
+    profile_id: { keyValue: kvProfile },
+    company_id: { keyValue: kvCompany },
+    person_id: { keyValue: kvPerson },
+  }),
+  tableFilters: (kvProfile: KeyValueType, kvCompany: KeyValueType, kvPerson: KeyValueType): FormFieldsInjectorInterface => ({
+    profile_id: { options: toOptions(kvProfile) },
+    company_id: { options: toOptions(kvCompany) },
+    person_id: { options: toOptions(kvPerson) },
   }),
 };
 

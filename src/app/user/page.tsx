@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useUserResource } from "@/resources/user.resource";
 import CoreCrudBuilderComponent from "@/components/core/coreCrudBuilder.component";
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
-import { injectOnFormFields } from "@/utils/injector.util";
+import { injectOnFilterFields, injectOnFormFields, injectOnTableColumns } from "@/utils/injector.util";
 import { RetrieveMultiple } from "@/utils/retrieveMultiple.util";
 
 // Não remover, exemplo de utilização de contexto na página
@@ -17,13 +17,15 @@ export default function UserPage() {
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const result = await RetrieveMultiple.get([
+        const { kvProfile, kvCompany, kvPerson } = await RetrieveMultiple.get([
           { resource: "profile", keyValue: true, alias: "kvProfile" },
           { resource: "company", keyValue: true, alias: "kvCompany" },
           { resource: "person", keyValue: true, alias: "kvPerson" },
         ]);
 
-        injectOnFormFields(userResource.formFields, userResource.injectors.formFields(result.kvProfile, result.kvCompany, result.kvPerson));
+        injectOnFormFields(userResource.formFields, userResource.injectors.formFields(kvProfile, kvCompany, kvPerson));
+        injectOnTableColumns(userResource.tableColumns, userResource.injectors.tableColumns(kvProfile, kvCompany, kvPerson));
+        injectOnFilterFields(userResource.tableFilters, userResource.injectors.tableFilters(kvProfile, kvCompany, kvPerson));
       } catch (error) {
         console.error("Erro ao buscar resources:", error);
       } finally {
@@ -32,7 +34,6 @@ export default function UserPage() {
     };
 
     fetchResources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!loaded) return <div>Carregando...</div>;
