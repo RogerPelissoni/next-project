@@ -5,6 +5,7 @@ import { useUserResource } from "@/resources/user.resource";
 import CoreCrudBuilderComponent from "@/components/core/coreCrudBuilder.component";
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
 import { injectOnFormFields } from "@/utils/injector.util";
+import { RetrieveMultiple } from "@/utils/retrieveMultiple.util";
 
 // Não remover, exemplo de utilização de contexto na página
 // import { useCoreTable } from "@/core/table/useCoreTable";
@@ -13,20 +14,32 @@ export default function UserPage() {
   const userResource = useUserResource();
   const [loaded, setLoaded] = useState(false);
 
-  const [obProfile] = useState([{ id: "1", name: "Admin" }]);
-  const [obCompany] = useState([
-    { id: "1", name: "Empresa X" },
-    { id: "2", name: "Empresa Y" },
-  ]);
-  const [obPerson] = useState([{ id: "1", name: "João da Silva" }]);
-
   useEffect(() => {
-    injectOnFormFields(
-      userResource.formFields,
-      userResource.injectors.formFields(obProfile, obCompany, obPerson)
-    );
+    const fetchResources = async () => {
+      try {
+        const result = await RetrieveMultiple.setResource([
+          { resource: "profile", keyValue: true, alias: "kvProfile" },
+          { resource: "company", keyValue: true, alias: "kvCompany" },
+          { resource: "person", keyValue: true, alias: "kvPerson" },
+        ]);
 
-    Promise.resolve().then(() => setLoaded(true));
+        injectOnFormFields(
+          userResource.formFields,
+          userResource.injectors.formFields(
+            result.kvProfile || [],
+            result.kvCompany || [],
+            result.kvPerson || []
+          )
+        );
+      } catch (error) {
+        console.error("Erro ao buscar resources:", error);
+      } finally {
+        Promise.resolve().then(() => setLoaded(true));
+      }
+    };
+
+    fetchResources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!loaded) return <div>Carregando...</div>;
