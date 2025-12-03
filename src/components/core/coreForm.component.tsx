@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   useForm,
   Control,
@@ -21,7 +20,7 @@ import { CoreSelectComponent } from "./coreSelect.component";
 import { CoreDateComponent } from "./coreDate.component";
 
 /** Config mínima de campo do resource */
-type CrudFieldConfig = {
+type FieldInterface = {
   type: "text" | "password" | "select" | "date";
   label: string;
   options?: { label: string; value: string }[];
@@ -30,7 +29,7 @@ type CrudFieldConfig = {
 /** FormFields conforme seu resource */
 type FormFieldsShape<T> = {
   main: {
-    fields: Record<keyof T & string, CrudFieldConfig>;
+    fields: Record<keyof T & string, FieldInterface>;
   };
 };
 
@@ -74,7 +73,7 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({
   type Key = keyof TFieldValues & string;
   const keys = Object.keys(formFields.main.fields) as Key[];
 
-  const renderField = (key: Key, cfg: CrudFieldConfig) => {
+  const renderField = (key: Key, cfg: FieldInterface) => {
     const name = key as Path<TFieldValues>; // safe because Key comes from the record keys
 
     const commonProps = {

@@ -6,34 +6,23 @@ import { useState } from "react";
 import CoreFormComponent from "./coreForm.component";
 import { ZodSchema } from "zod";
 import { CoreTableComponent } from "@/core/table/CoreTableComponent";
+import { CoreTableColumnFilter } from "@/core/table/CoreTableColumnFilter";
 
 type CoreCrudBuilderProps = {
   title: string;
   schema: ZodSchema<any>;
-  tableColumns: any[];
   formState: any;
   formFields: any;
 };
 
-export default function CoreCrudBuilderComponent({
-  title,
-  schema,
-  tableColumns,
-  formState,
-  formFields,
-}: CoreCrudBuilderProps) {
+export default function CoreCrudBuilderComponent({ title, schema, formState, formFields }: CoreCrudBuilderProps) {
   const [isOpenForm, setIsOpenForm] = useState(false);
   const toggleForm = () => setIsOpenForm(!isOpenForm);
 
   return (
     <CoreCardComponent
       title={title}
-      actions={
-        <CoreButtonComponent
-          label={isOpenForm ? "Voltar" : "Novo Registro"}
-          onClick={toggleForm}
-        />
-      }
+      actions={<CoreButtonComponent label={isOpenForm ? "Voltar" : "Novo Registro"} onClick={toggleForm} />}
       content={
         isOpenForm ? (
           <CoreFormComponent

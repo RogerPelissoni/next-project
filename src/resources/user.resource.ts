@@ -1,23 +1,8 @@
 import { UserFormSchema, userSchema } from "@/schemas/user.schema";
+import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/types/core.types";
+import { FormFieldsInjectorInterface } from "@/utils/injector.util";
 
-export interface CrudFieldConfig {
-  type: "text" | "password" | "select";
-  label: string;
-  options?: { label: string; value: string }[];
-}
-
-export interface FormFieldsConfig {
-  main: {
-    fields: Record<keyof UserFormSchema, CrudFieldConfig>;
-  };
-}
-
-export interface TableColumn {
-  accessorKey: string;
-  header: string;
-}
-
-export const tableColumns: TableColumn[] = [
+export const tableColumns: TableColumnInterface = [
   { accessorKey: "id", header: "#" },
   { accessorKey: "name", header: "Nome" },
   { accessorKey: "email", header: "Email" },
@@ -25,6 +10,33 @@ export const tableColumns: TableColumn[] = [
   { accessorKey: "ds_profile", header: "Perfil" },
   { accessorKey: "ds_company", header: "Empresa" },
 ];
+
+export const tableFilters: TableFiltersInterface = {
+  name: { 
+    type: "text", 
+    label: "Nome",
+    placeholder: "Filtrar por nome",
+    matchMode: "like" 
+  },
+  email: { 
+    type: "text", 
+    label: "Email",
+    placeholder: "Filtrar por email",
+    matchMode: "like" 
+  },
+  ds_profile: { 
+    type: "select", 
+    label: "Perfil",
+    placeholder: "Selecionar perfil",
+    matchMode: "equals"
+  },
+  ds_company: { 
+    type: "select", 
+    label: "Empresa",
+    placeholder: "Selecionar empresa",
+    matchMode: "equals"
+  },
+};
 
 export const formState: UserFormSchema = {
   id: undefined,
@@ -36,22 +48,22 @@ export const formState: UserFormSchema = {
   company_id: "",
 };
 
-export const formFields: FormFieldsConfig = {
+export const formFields: FormFieldsInterface<"main", UserFormSchema> = {
   main: {
     fields: {
+      id: { type: "text", label: "ID", disabled: true },
       name: { type: "text", label: "Nome" },
       email: { type: "text", label: "Email" },
       password: { type: "password", label: "Senha" },
       person_id: { type: "select", label: "Pessoa" },
       profile_id: { type: "select", label: "Perfil" },
       company_id: { type: "select", label: "Empresa" },
-      id: { type: "text", label: "ID" }, // normalmente hidden, mas coloquei para manter a interface completa
     },
   },
 };
 
 export const injectors = {
-  formFields: (obProfile: any[], obCompany: any[], obPerson: any[]) => ({
+  formFields: (obProfile: any[], obCompany: any[], obPerson: any[]): FormFieldsInjectorInterface => ({
     profile_id: {
       options: obProfile.map((p) => ({
         label: p.name ?? p.label,
@@ -76,6 +88,7 @@ export const injectors = {
 export const useUserResource = () => ({
   schema: userSchema,
   tableColumns,
+  tableFilters,
   formState,
   formFields,
   injectors,
