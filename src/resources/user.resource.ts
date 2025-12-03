@@ -12,29 +12,29 @@ export const tableColumns: TableColumnInterface = [
 ];
 
 export const tableFilters: TableFiltersInterface = {
-  name: { 
-    type: "text", 
+  name: {
+    type: "text",
     label: "Nome",
     placeholder: "Filtrar por nome",
-    matchMode: "like" 
+    matchMode: "like",
   },
-  email: { 
-    type: "text", 
+  email: {
+    type: "text",
     label: "Email",
     placeholder: "Filtrar por email",
-    matchMode: "like" 
+    matchMode: "like",
   },
-  ds_profile: { 
-    type: "select", 
+  ds_profile: {
+    type: "select",
     label: "Perfil",
     placeholder: "Selecionar perfil",
-    matchMode: "equals"
+    matchMode: "equals",
   },
-  ds_company: { 
-    type: "select", 
+  ds_company: {
+    type: "select",
     label: "Empresa",
     placeholder: "Selecionar empresa",
-    matchMode: "equals"
+    matchMode: "equals",
   },
 };
 
@@ -65,10 +65,7 @@ export const formFields: FormFieldsInterface<"main", UserFormSchema> = {
 export const injectors = {
   formFields: (obProfile: any[], obCompany: any[], obPerson: any[]): FormFieldsInjectorInterface => ({
     profile_id: {
-      options: obProfile.map((p) => ({
-        label: p.name ?? p.label,
-        value: p.id ?? p.value,
-      })),
+      options: [{ value: "1", label: "teste" }],
     },
     company_id: {
       options: obCompany.map((c) => ({

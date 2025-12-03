@@ -17,20 +17,13 @@ export default function UserPage() {
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const result = await RetrieveMultiple.setResource([
+        const result = await RetrieveMultiple.get([
           { resource: "profile", keyValue: true, alias: "kvProfile" },
           { resource: "company", keyValue: true, alias: "kvCompany" },
           { resource: "person", keyValue: true, alias: "kvPerson" },
         ]);
 
-        injectOnFormFields(
-          userResource.formFields,
-          userResource.injectors.formFields(
-            result.kvProfile || [],
-            result.kvCompany || [],
-            result.kvPerson || []
-          )
-        );
+        injectOnFormFields(userResource.formFields, userResource.injectors.formFields(result.kvProfile, result.kvCompany, result.kvPerson));
       } catch (error) {
         console.error("Erro ao buscar resources:", error);
       } finally {
@@ -58,12 +51,5 @@ function UserPageContent() {
   // const coreTable = useCoreTable();
   // console.log("coreTable", coreTable.columns, coreTable.data);
 
-  return (
-    <CoreCrudBuilderComponent
-      title="Usuários"
-      schema={userResource.schema}
-      formState={userResource.formState}
-      formFields={userResource.formFields}
-    />
-  );
+  return <CoreCrudBuilderComponent title="Usuários" schema={userResource.schema} formState={userResource.formState} formFields={userResource.formFields} />;
 }
