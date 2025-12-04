@@ -5,7 +5,7 @@ export async function POST(req: Request) {
     const API_URL = process.env.API_URL!;
     const body = await req.json();
 
-    const apiRes = await fetch(`${API_URL}/resources/retrieve-multiple`, {
+    const apiRes = await fetch(`${API_URL}/retrieve/retrieve-multiple`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
