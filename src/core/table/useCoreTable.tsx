@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import { CoreTableContext } from "./CoreTableContext";
 
-export function useCoreTable<T>() {
+export function useCoreTable() {
   const ctx = useContext(CoreTableContext);
 
   if (!ctx) {

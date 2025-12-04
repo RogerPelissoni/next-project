@@ -52,5 +52,5 @@ function UserPageContent() {
   // const coreTable = useCoreTable();
   // console.log("coreTable", coreTable.columns, coreTable.data);
 
-  return <CoreCrudBuilderComponent title="Usuários" schema={userResource.schema} formState={userResource.formState} formFields={userResource.formFields} />;
+  return <CoreCrudBuilderComponent resource="user" title="Usuários" schema={userResource.schema} formState={userResource.formState} formFields={userResource.formFields} />;
 }

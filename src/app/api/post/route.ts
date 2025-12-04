@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("access_token")?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     const API_URL = process.env.API_URL!;
     const contentType = req.headers.get("content-type") || "";
 
@@ -24,12 +32,13 @@ export async function POST(req: Request) {
       // remove fields that NestJS must NOT receive
       const { resource: _, method: __, ...cleanPayload } = json;
 
-      const apiUrl = `${API_URL}${resource}`;
+      const apiUrl = `${API_URL}/${resource}`;
 
       const apiRes = await fetch(apiUrl, {
         method,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(cleanPayload),
       });
@@ -60,10 +69,13 @@ export async function POST(req: Request) {
         }
       });
 
-      const apiUrl = `${API_URL}${resource}`;
+      const apiUrl = `${API_URL}/${resource}`;
 
       const apiRes = await fetch(apiUrl, {
         method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: cleanForm,
       });
 
