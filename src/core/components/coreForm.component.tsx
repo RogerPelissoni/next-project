@@ -12,6 +12,7 @@ import CoreButtonComponent from "./coreButton.component";
 import { CoreInputComponent } from "./coreInput.component";
 import { CoreSelectComponent } from "./coreSelect.component";
 import { CoreDateComponent } from "./coreDate.component";
+import { IconSave } from "../utils/icon.util";
 
 type FieldInterface = {
   type: "text" | "password" | "select" | "date";
@@ -80,10 +81,12 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ sc
       <form onSubmit={form.handleSubmit(handleSubmit)} className={`flex flex-wrap items-start space-y-4 mt-4 ${className ?? ""}`}>
         {keys.map((key) => renderField(key, formFields.main.fields[key]))}
 
-        <Separator className="w-full my-2" />
+        <Separator className="w-full my-2 mb-4" />
 
         <div className="w-full flex justify-end">
-          <CoreButtonComponent type="submit" label="Salvar" />
+          <CoreButtonComponent type="submit">
+            <IconSave /> Salvar
+          </CoreButtonComponent>
         </div>
       </form>
     </Form>

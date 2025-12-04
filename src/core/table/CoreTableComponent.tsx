@@ -14,9 +14,10 @@ import { CoreSelectComponent } from "@/core/components/coreSelect.component";
 import { CoreDateComponent } from "@/core/components/coreDate.component";
 import CoreButtonComponent from "@/core/components/coreButton.component";
 import { useCoreTable } from "./useCoreTable";
+import { IconEdit, IconSearch, IconTrash } from "../utils/icon.util";
 
 export function CoreTableComponent<TData>() {
-  const { data, columns, loading, totalRecords, pagination, setPagination, sorting, setSorting, filters, setFilters, filterConfig } = useCoreTable<TData>();
+  const { data, columns, loading, totalRecords, pagination, setPagination, sorting, setSorting, filters, setFilters, filterConfig } = useCoreTable();
 
   // TODO: O Filter também deverá possuir schema zod, pois podem ter campos obrigatórios
   const createFilterSchema = () => {
@@ -158,7 +159,9 @@ export function CoreTableComponent<TData>() {
               ))}
             </div>
             <div className="flex justify-end mt-4">
-              <CoreButtonComponent label="Filtrar" onClick={handleFilterClick} />
+              <CoreButtonComponent onClick={handleFilterClick}>
+                <IconSearch /> Filtrar
+              </CoreButtonComponent>
             </div>
           </div>
         </Form>
@@ -215,6 +218,8 @@ export function CoreTableComponent<TData>() {
                         </div>
                       </TableHead>
                     ))}
+
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 ))}
               </TableHeader>
@@ -237,6 +242,18 @@ export function CoreTableComponent<TData>() {
                           })()}
                         </TableCell>
                       ))}
+
+                      <TableCell className="w-2.5">
+                        <div className="flex gap-2">
+                          <CoreButtonComponent className="h-2 w-2 hover:text-orange-500" variant={null} onClick={() => console.log("Editar:", row.original)}>
+                            <IconEdit />
+                          </CoreButtonComponent>
+
+                          <CoreButtonComponent className="h-2 w-2 hover:text-red-500" variant={null} onClick={() => console.log("Remover:", row.original)}>
+                            <IconTrash />
+                          </CoreButtonComponent>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (

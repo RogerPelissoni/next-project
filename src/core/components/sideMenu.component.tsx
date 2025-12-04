@@ -1,5 +1,6 @@
 "use client";
 
+import { IconLogOut } from "../utils/icon.util";
 import CoreButtonComponent from "./coreButton.component";
 
 export function SideMenu() {
@@ -11,7 +12,9 @@ export function SideMenu() {
 
   return (
     <div>
-      <CoreButtonComponent label="Sair" onClick={doLogout} />
+      <CoreButtonComponent onClick={doLogout}>
+        <IconLogOut /> Sair
+      </CoreButtonComponent>
     </div>
   );
 }

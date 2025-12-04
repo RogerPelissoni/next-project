@@ -8,6 +8,7 @@ import { ZodSchema } from "zod";
 import { CoreTableComponent } from "@/core/table/CoreTableComponent";
 import { http } from "../utils/http.util";
 import { useCoreTable } from "../table/useCoreTable";
+import { IconPlus, IconUndo } from "../utils/icon.util";
 
 type CoreCrudBuilderProps = {
   resource: string;
@@ -41,7 +42,19 @@ export default function CoreCrudBuilderComponent({ resource, title, schema, form
   return (
     <CoreCardComponent
       title={title}
-      actions={<CoreButtonComponent label={isOpenForm ? "Voltar" : "Novo Registro"} onClick={toggleForm} />}
+      actions={
+        <CoreButtonComponent onClick={toggleForm}>
+          {isOpenForm ? (
+            <>
+              <IconUndo /> Voltar
+            </>
+          ) : (
+            <>
+              <IconPlus /> Novo Registro
+            </>
+          )}
+        </CoreButtonComponent>
+      }
       content={isOpenForm ? <CoreFormComponent schema={schema} formFields={formFields} defaultValues={formState} onSubmit={onSubmitForm} /> : <CoreTableComponent />}
     />
   );
