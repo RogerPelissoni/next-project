@@ -26,8 +26,7 @@ export default function LoginPage() {
               return;
             }
 
-            // TODO: Implementar swal e toast (buscar mais utilizado para NextJS)
-            console.log("Logado com sucesso!");
+            window.location.href = "/dashboard";
           }}
         />
       }
