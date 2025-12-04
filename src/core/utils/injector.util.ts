@@ -1,4 +1,4 @@
-import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/types/core.types";
+import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/core/types/core.types";
 import { _assign, _get, _pick } from "./lodash.util";
 
 // FormFields

@@ -9,16 +9,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Form } from "@/components/ui/form";
-import { CoreInputComponent } from "@/components/core/coreInput.component";
-import { CoreSelectComponent } from "@/components/core/coreSelect.component";
-import { CoreDateComponent } from "@/components/core/coreDate.component";
-import CoreButtonComponent from "@/components/core/coreButton.component";
+import { CoreInputComponent } from "@/core/components/coreInput.component";
+import { CoreSelectComponent } from "@/core/components/coreSelect.component";
+import { CoreDateComponent } from "@/core/components/coreDate.component";
+import CoreButtonComponent from "@/core/components/coreButton.component";
 import { useCoreTable } from "./useCoreTable";
 
 export function CoreTableComponent<TData>() {
   const { data, columns, loading, totalRecords, pagination, setPagination, sorting, setSorting, filters, setFilters, filterConfig } = useCoreTable<TData>();
 
-  // Criar schema Zod dinâmico baseado no filterConfig
+  // TODO: O Filter também deverá possuir schema zod, pois podem ter campos obrigatórios
   const createFilterSchema = () => {
     if (!filterConfig || Object.keys(filterConfig).length === 0) {
       return z.object({});
@@ -27,7 +27,6 @@ export function CoreTableComponent<TData>() {
     const schemaObject: Record<string, z.ZodSchema> = {};
 
     Object.entries(filterConfig).forEach(([columnId, config]) => {
-      // String vazio é opcional (filtro pode estar vazio)
       let field: z.ZodSchema = z.string().optional();
 
       switch (config.type) {
@@ -56,14 +55,12 @@ export function CoreTableComponent<TData>() {
   const filterSchema = createFilterSchema();
   type FilterFormValues = z.infer<typeof filterSchema>;
 
-  // Form para filtros com Zod
   const filterForm = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
     defaultValues: Object.keys(filterConfig || {}).reduce((acc, key) => ({ ...acc, [key]: "" }), {}) as FilterFormValues,
     mode: "onChange",
   });
 
-  // Track previous filter values to avoid unnecessary updates
   const handleFilterClick = () => {
     const currentValues = filterForm.getValues();
     const newFilters: typeof filters = [];
@@ -101,7 +98,6 @@ export function CoreTableComponent<TData>() {
       setSorting(newSorting.map((s) => ({ id: s.id, desc: s.desc })));
     },
     onColumnFiltersChange: () => {},
-
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     manualSorting: true,

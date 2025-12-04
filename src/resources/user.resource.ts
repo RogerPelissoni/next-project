@@ -1,7 +1,7 @@
 import { UserFormSchema, userSchema } from "@/schemas/user.schema";
-import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/types/core.types";
-import { KeyValueType, toOptions } from "@/utils/core.util";
-import { FormFieldsInjectorInterface, TableColumnsInjectorInterface } from "@/utils/injector.util";
+import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/core/types/core.types";
+import { KeyValueType, toOptions } from "@/core/utils/core.util";
+import { FormFieldsInjectorInterface, TableColumnsInjectorInterface } from "@/core/utils/injector.util";
 
 export const tableColumns: TableColumnInterface = [
   { accessorKey: "id", header: "#" },

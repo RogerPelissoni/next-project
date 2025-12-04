@@ -1,4 +1,4 @@
-import { KeyValueType } from "@/utils/core.util";
+import { KeyValueType } from "@/core/utils/core.util";
 
 export type FormFieldsInterface<T extends string, S> = {
   [K in T]: {

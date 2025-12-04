@@ -1,12 +1,11 @@
 "use client";
 
-import CoreCardComponent from "@/components/core/coreCard.component";
+import CoreCardComponent from "@/core/components/coreCard.component";
 import CoreButtonComponent from "./coreButton.component";
 import { useState } from "react";
 import CoreFormComponent from "./coreForm.component";
 import { ZodSchema } from "zod";
 import { CoreTableComponent } from "@/core/table/CoreTableComponent";
-import { CoreTableColumnFilter } from "@/core/table/CoreTableColumnFilter";
 
 type CoreCrudBuilderProps = {
   title: string;

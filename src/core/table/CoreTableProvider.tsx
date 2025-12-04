@@ -3,7 +3,7 @@
 import { ReactNode, useEffect, useState, useCallback } from "react";
 import { CoreTableContext, ColumnFilter, PaginationState } from "./CoreTableContext";
 import { ColumnDef } from "@tanstack/react-table";
-import { TableFiltersInterface } from "@/types/core.types";
+import { TableFiltersInterface } from "@/core/types/core.types";
 
 interface Props<T> {
   resource: string;
@@ -12,24 +12,17 @@ interface Props<T> {
   children: ReactNode;
 }
 
-export function CoreTableProvider<T>({
-  resource,
-  columns,
-  filterConfig,
-  children,
-}: Props<T>) {
+export function CoreTableProvider<T>({ resource, columns, filterConfig, children }: Props<T>) {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalRecords, setTotalRecords] = useState(0);
   const [filters, setFilters] = useState<ColumnFilter[]>([]);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
   const [sorting, setSorting] = useState<Array<{ id: string; desc: boolean }>>([]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
+
     try {
       const params = new URLSearchParams({
         resource,
@@ -37,9 +30,10 @@ export function CoreTableProvider<T>({
         take: String(pagination.pageSize),
       });
 
-      // Consolidar filtros em um único objeto JSON e enviar como `filters`.
+      // Filters
       if (filters.length > 0) {
         const filtersPayload: Record<string, { value: any; matchMode?: string }> = {};
+
         filters.forEach((filter) => {
           filtersPayload[filter.columnId] = {
             value: filter.value,
@@ -50,7 +44,7 @@ export function CoreTableProvider<T>({
         params.append("filters", JSON.stringify(filtersPayload));
       }
 
-      // Adicionar ordenação
+      // Sorting
       if (sorting.length > 0) {
         const { id, desc } = sorting[0];
         params.append("sortBy", id);

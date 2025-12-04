@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useUserResource } from "@/resources/user.resource";
-import CoreCrudBuilderComponent from "@/components/core/coreCrudBuilder.component";
+import CoreCrudBuilderComponent from "@/core/components/coreCrudBuilder.component";
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
-import { injectOnFilterFields, injectOnFormFields, injectOnTableColumns } from "@/utils/injector.util";
-import { RetrieveMultiple } from "@/utils/retrieveMultiple.util";
+import { injectOnFilterFields, injectOnFormFields, injectOnTableColumns } from "@/core/utils/injector.util";
+import { RetrieveMultiple } from "@/core/utils/retrieveMultiple.util";
 
 // Não remover, exemplo de utilização de contexto na página
 // import { useCoreTable } from "@/core/table/useCoreTable";
@@ -29,7 +29,7 @@ export default function UserPage() {
       } catch (error) {
         console.error("Erro ao buscar resources:", error);
       } finally {
-        Promise.resolve().then(() => setLoaded(true));
+        setLoaded(true);
       }
     };
 

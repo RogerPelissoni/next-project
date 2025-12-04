@@ -27,9 +27,7 @@ export function CoreTableColumnFilter({ columnId, placeholder = "Filtrar..." }: 
 
       if (exists) {
         // Update existing filter
-        return prevFilters.map((f) =>
-          f.columnId === columnId ? { columnId, value } : f
-        );
+        return prevFilters.map((f) => (f.columnId === columnId ? { columnId, value } : f));
       }
 
       // Add new filter
@@ -37,12 +35,5 @@ export function CoreTableColumnFilter({ columnId, placeholder = "Filtrar..." }: 
     });
   };
 
-  return (
-    <Input
-      placeholder={placeholder}
-      value={currentValue}
-      onChange={(e) => handleChange(e.target.value)}
-      className="max-w-sm"
-    />
-  );
+  return <Input placeholder={placeholder} value={currentValue} onChange={(e) => handleChange(e.target.value)} className="max-w-sm" />;
 }

@@ -2,7 +2,7 @@
 
 import { createContext } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { TableFiltersInterface } from "@/types/core.types";
+import { TableFiltersInterface } from "@/core/types/core.types";
 
 export interface PaginationState {
   pageIndex: number;
@@ -17,7 +17,7 @@ export interface ColumnFilter {
 
 export interface CoreTableContextType<T> {
   data: T[];
-  setData: (d: T[]) => void;
+  setData: React.Dispatch<React.SetStateAction<T[]>>;
 
   resource: string;
   reload: () => Promise<void>;
@@ -28,17 +28,15 @@ export interface CoreTableContextType<T> {
   columns: ColumnDef<T>[];
 
   filters: ColumnFilter[];
-  setFilters: (f: ColumnFilter[]) => void;
+  setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>;
 
   filterConfig?: TableFiltersInterface;
 
   pagination: PaginationState;
-  setPagination: (p: PaginationState) => void;
+  setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
 
   sorting: Array<{ id: string; desc: boolean }>;
-  setSorting: (s: Array<{ id: string; desc: boolean }>) => void;
+  setSorting: React.Dispatch<React.SetStateAction<Array<{ id: string; desc: boolean }>>>;
 }
 
-export const CoreTableContext = createContext<CoreTableContextType<any> | null>(
-  null
-);
+export const CoreTableContext = createContext<CoreTableContextType<any> | null>(null);
