@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
 
-const API_URL = process.env.API_URL!;
-
 export async function GET(req: Request) {
+  const API_URL = process.env.API_URL!;
   const url = new URL(req.url);
 
   const resource = url.searchParams.get("resource");
   if (!resource) {
-    return NextResponse.json(
-      { error: "Missing resource param" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Missing resource param" }, { status: 400 });
   }
 
   // Remove resource da query e mantém os outros filtros (id, search, etc)
@@ -18,8 +14,6 @@ export async function GET(req: Request) {
   params.delete("resource");
 
   const finalUrl = `${API_URL}/${resource}?${params.toString()}`;
-
-  console.log("🔗 API PROXY →", finalUrl);
 
   const res = await fetch(finalUrl, {
     headers: {
