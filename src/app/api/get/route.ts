@@ -1,15 +1,22 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
+
+  if (!token) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
   const API_URL = process.env.API_URL!;
   const url = new URL(req.url);
-
   const resource = url.searchParams.get("resource");
+
   if (!resource) {
     return NextResponse.json({ error: "Missing resource param" }, { status: 400 });
   }
 
-  // Remove resource da query e mantém os outros filtros (id, search, etc)
   const params = new URLSearchParams(url.searchParams);
   params.delete("resource");
 
@@ -18,7 +25,7 @@ export async function GET(req: Request) {
   const res = await fetch(finalUrl, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.API_TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
     cache: "no-store",
   });

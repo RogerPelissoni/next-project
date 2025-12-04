@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState, useCallback } from "react";
 import { CoreTableContext, ColumnFilter, PaginationState } from "./CoreTableContext";
 import { ColumnDef } from "@tanstack/react-table";
 import { TableFiltersInterface } from "@/core/types/core.types";
+import { http } from "../utils/http.util";
 
 interface Props<T> {
   resource: string;
@@ -24,11 +25,14 @@ export function CoreTableProvider<T>({ resource, columns, filterConfig, children
     setLoading(true);
 
     try {
-      const params = new URLSearchParams({
+      const queryParams = {
         resource,
         skip: String(pagination.pageIndex * pagination.pageSize),
         take: String(pagination.pageSize),
-      });
+        filters: "",
+        sortBy: "id",
+        sortOrder: "asc",
+      };
 
       // Filters
       if (filters.length > 0) {
@@ -41,21 +45,20 @@ export function CoreTableProvider<T>({ resource, columns, filterConfig, children
           };
         });
 
-        params.append("filters", JSON.stringify(filtersPayload));
+        queryParams.filters = JSON.stringify(filtersPayload);
       }
 
       // Sorting
       if (sorting.length > 0) {
         const { id, desc } = sorting[0];
-        params.append("sortBy", id);
-        params.append("sortOrder", desc ? "desc" : "asc");
+        queryParams.sortBy = id;
+        queryParams.sortOrder = desc ? "desc" : "asc";
       }
 
-      const res = await fetch(`/api/get?${params.toString()}`);
-      const json = await res.json();
+      const getResponse = await http.get(resource, queryParams);
 
-      setData(json.data || []);
-      setTotalRecords(json.total || 0);
+      setData(getResponse.data || []);
+      setTotalRecords(getResponse.total || 0);
     } finally {
       setLoading(false);
     }

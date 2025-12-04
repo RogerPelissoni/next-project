@@ -10,20 +10,20 @@ export interface MenuItem {
 export const menuConfig: MenuItem[] = [
   {
     label: "Home",
-    href: "/",
+    href: "/dashboard",
   },
   {
     label: "Cadastros",
     children: [
-      { label: "Usuários", href: "/user" },
-      { label: "Perfis", href: "/profile" },
+      { label: "Usuários", href: "/dashboard/user" },
+      { label: "Perfis", href: "/dashboard/profile" },
     ],
   },
   {
     label: "Relatórios",
     children: [
-      { label: "Usuários", href: "/report/user" },
-      { label: "Perfis", href: "/report/profile" },
+      { label: "Usuários", href: "/dashboard/report/user" },
+      { label: "Perfis", href: "/dashboard/report/profile" },
     ],
   },
 ];
