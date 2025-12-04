@@ -17,7 +17,7 @@ import { useCoreTable } from "./useCoreTable";
 
 export function CoreTableComponent<TData>() {
   const { data, columns, loading, totalRecords, pagination, setPagination, sorting, setSorting, filters, setFilters, filterConfig } = useCoreTable<TData>();
-  
+
   // Criar schema Zod dinâmico baseado no filterConfig
   const createFilterSchema = () => {
     if (!filterConfig || Object.keys(filterConfig).length === 0) {
@@ -59,10 +59,7 @@ export function CoreTableComponent<TData>() {
   // Form para filtros com Zod
   const filterForm = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
-    defaultValues: Object.keys(filterConfig || {}).reduce(
-      (acc, key) => ({ ...acc, [key]: "" }),
-      {}
-    ) as FilterFormValues,
+    defaultValues: Object.keys(filterConfig || {}).reduce((acc, key) => ({ ...acc, [key]: "" }), {}) as FilterFormValues,
     mode: "onChange",
   });
 
@@ -128,39 +125,22 @@ export function CoreTableComponent<TData>() {
       case "text":
         return (
           <div key={`filter-${columnId}`} onKeyDown={handleKeyDown}>
-            <CoreInputComponent
-              {...commonProps}
-              type="text"
-            />
+            <CoreInputComponent {...commonProps} type="text" />
           </div>
         );
 
       case "number":
         return (
           <div key={`filter-${columnId}`} onKeyDown={handleKeyDown}>
-            <CoreInputComponent
-              {...commonProps}
-              type="number"
-            />
+            <CoreInputComponent {...commonProps} type="number" />
           </div>
         );
 
       case "select":
-        return (
-          <CoreSelectComponent
-            key={`filter-${columnId}`}
-            {...commonProps}
-            options={(config.options ?? []) as Array<{ label: string; value: string }>}
-          />
-        );
+        return <CoreSelectComponent key={`filter-${columnId}`} {...commonProps} options={(config.options ?? []) as Array<{ label: string; value: string }>} />;
 
       case "date":
-        return (
-          <CoreDateComponent
-            key={`filter-${columnId}`}
-            {...commonProps}
-          />
-        );
+        return <CoreDateComponent key={`filter-${columnId}`} {...commonProps} />;
 
       default:
         return null;
@@ -182,10 +162,7 @@ export function CoreTableComponent<TData>() {
               ))}
             </div>
             <div className="flex justify-end mt-4">
-              <CoreButtonComponent 
-                label="Filtrar" 
-                onClick={handleFilterClick}
-              />
+              <CoreButtonComponent label="Filtrar" onClick={handleFilterClick} />
             </div>
           </div>
         </Form>
@@ -251,7 +228,18 @@ export function CoreTableComponent<TData>() {
                   table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id} className="hover:bg-muted/50">
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                        <TableCell key={cell.id}>
+                          {(() => {
+                            const colDef: any = cell.column.columnDef;
+                            const rawValue = cell.getValue() as string | number;
+
+                            if (colDef.keyValue && rawValue !== undefined && rawValue !== null) {
+                              return colDef.keyValue[rawValue] ?? rawValue;
+                            }
+
+                            return flexRender(colDef.cell, cell.getContext());
+                          })()}
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))

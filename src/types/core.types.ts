@@ -1,3 +1,5 @@
+import { KeyValueType } from "@/utils/core.util";
+
 export type FormFieldsInterface<T extends string, S> = {
   [K in T]: {
     fields: Record<keyof S, FieldInterface>;
@@ -16,6 +18,7 @@ export type TableColumnInterface = TableColumnSingle[];
 export interface TableColumnSingle {
   accessorKey: string;
   header: string;
+  keyValue?: KeyValueType;
 }
 
 export type TableFilterType = "text" | "select" | "date" | "number" | "boolean";
