@@ -9,6 +9,8 @@ import { http } from "../utils/http.util";
 import { useCoreTable } from "../table/useCoreTable";
 import { IconPlus, IconUndo } from "../utils/icon.util";
 import { useCoreForm } from "../form/CoreFormContext";
+import { toast } from "../utils/toast.util";
+import { useSwalConfirm } from "../providers/ConfirmDialogProvider";
 
 export default function CoreCrudBuilderComponent() {
   const [isOpenForm, setIsOpenForm] = useState(false);
@@ -44,15 +46,26 @@ export default function CoreCrudBuilderComponent() {
     setIsOpenForm(true);
   };
 
+  const swalConfirm = useSwalConfirm();
+
   const handleDelete = async (record: any) => {
-    if (!confirm("Tem certeza que deseja excluir este registro?")) return;
+    const confirmed = await swalConfirm({
+      title: "Deseja remover o registro?",
+      description: "Esta ação é irreversível.",
+      confirmText: "Sim, excluir",
+      cancelText: "Cancelar",
+      variant: "destructive",
+    });
+
+    if (!confirmed) return;
 
     try {
       await http.delete(`${coreForm.resource}/${record.id}`);
       coreTable.reload();
-      // toast.success("Registro excluído");
-    } catch (error) {
-      // toast.error("Erro ao excluir");
+
+      toast.success("Operação efetuada com sucesso!");
+    } catch (error: any) {
+      toast.error(`Ocorreram problemas durante a operação: ${error}`);
     }
   };
 

@@ -5,3 +5,5 @@ export { Save as IconSave } from "lucide-react";
 export { LogOut as IconLogOut } from "lucide-react";
 export { Search as IconSearch } from "lucide-react";
 export { Trash as IconTrash } from "lucide-react";
+export { TriangleAlert as IconTriangleAlert } from "lucide-react";
+export { Info as IconInfo } from "lucide-react";

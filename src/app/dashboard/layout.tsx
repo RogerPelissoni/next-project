@@ -4,6 +4,8 @@ import { CoreNavBar } from "@/core/components/CoreNavBarComponent";
 import { ThemeProvider } from "@/core/providers/ThemeProvider";
 import { CoreModeToggle } from "@/core/components/CoreModeToggleComponent";
 import { CoreSideMenu } from "@/core/components/CoreSideMenuComponent";
+import { SwalConfirmProvider } from "@/core/providers/ConfirmDialogProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,23 +17,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <header className="flex justify-between p-2 border-b">
-            <div className="flex items-center gap-2">
-              <h2 className="w-[200px] px-2 text-center bg-gray-200">LOGO</h2>
-              <CoreNavBar />
-            </div>
+          <SwalConfirmProvider>
+            <header className="flex justify-between p-2 border-b">
+              <div className="flex items-center gap-2">
+                <h2 className="w-[200px] px-2 text-center bg-gray-200">LOGO</h2>
+                <CoreNavBar />
+              </div>
+              <div className="flex items-center px-2 gap-2">
+                <CoreModeToggle />
+                <CoreSideMenu />
+              </div>
+            </header>
 
-            <div className="flex items-center px-2 gap-2">
-              <CoreModeToggle />
-              <CoreSideMenu />
-            </div>
-          </header>
+            <main className="flex-1">{children}</main>
 
-          <main className="flex-1">{children}</main>
+            <Toaster richColors closeButton position="top-right" expand />
 
-          <footer className="p-4 border-t">
-            <h2>footer</h2>
-          </footer>
+            <footer className="p-4 border-t">
+              <h2>footer</h2>
+            </footer>
+          </SwalConfirmProvider>
         </ThemeProvider>
       </body>
     </html>

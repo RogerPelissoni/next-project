@@ -1,7 +1,7 @@
 import { LoginFormSchema, loginSchema } from "@/schemas/login.schema";
 import { FormFieldsInterface } from "@/core/types/core.types";
 
-export const formState: LoginFormSchema = {
+export const formStateInitial: LoginFormSchema = {
   email: "",
   password: "",
 };
@@ -17,6 +17,6 @@ export const formFields: FormFieldsInterface<"main", LoginFormSchema> = {
 
 export const useLoginResource = () => ({
   schema: loginSchema,
-  formState,
+  formStateInitial,
   formFields,
 });
