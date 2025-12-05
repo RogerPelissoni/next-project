@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <main className="flex-1">{children}</main>
 
-            <Toaster richColors closeButton position="top-right" expand />
+            <Toaster position="top-right" />
 
             <footer className="p-4 border-t">
               <h2>footer</h2>
