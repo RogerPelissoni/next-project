@@ -1,7 +1,7 @@
 "use client";
 
-import CoreCardComponent from "@/core/components/coreCard.component";
-import CoreFormComponent from "@/core/components/coreForm.component";
+import CoreCardComponent from "@/core/components/CoreCardComponent";
+import CoreFormComponent from "@/core/components/CoreFormComponent";
 import { useLoginResource } from "@/resources/login.resource";
 
 export default function LoginPage() {

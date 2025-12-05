@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import { ThemeProvider } from "@/core/providers/theme.provider";
-import { ModeToggle } from "@/core/components/modeToggle.component";
+import { ThemeProvider } from "@/core/providers/ThemeProvider";
+import { CoreModeToggle } from "@/core/components/CoreModeToggleComponent";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <header className="flex justify-end p-2 border-b">
-            <ModeToggle />
+            <CoreModeToggle />
           </header>
 
           <main className="flex-1">{children}</main>

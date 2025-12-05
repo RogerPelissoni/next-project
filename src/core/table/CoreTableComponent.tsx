@@ -9,10 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Form } from "@/components/ui/form";
-import { CoreInputComponent } from "@/core/components/coreInput.component";
-import { CoreSelectComponent } from "@/core/components/coreSelect.component";
-import { CoreDateComponent } from "@/core/components/coreDate.component";
-import CoreButtonComponent from "@/core/components/coreButton.component";
+import { CoreInputTextComponent } from "@/core/components/CoreInputTextComponent";
+import { CoreSelectComponent } from "@/core/components/CoreSelectComponent";
+import { CoreInputDateComponent } from "@/core/components/CoreInputDateComponent";
+import CoreButtonComponent from "@/core/components/CoreButtonComponent";
 import { useCoreTable } from "./useCoreTable";
 import { IconEdit, IconSearch, IconTrash } from "../utils/icon.util";
 
@@ -127,14 +127,14 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
       case "text":
         return (
           <div key={`filter-${columnId}`} onKeyDown={handleKeyDown}>
-            <CoreInputComponent {...commonProps} type="text" />
+            <CoreInputTextComponent {...commonProps} type="text" />
           </div>
         );
 
       case "number":
         return (
           <div key={`filter-${columnId}`} onKeyDown={handleKeyDown}>
-            <CoreInputComponent {...commonProps} type="number" />
+            <CoreInputTextComponent {...commonProps} type="number" />
           </div>
         );
 
@@ -142,7 +142,7 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
         return <CoreSelectComponent key={`filter-${columnId}`} {...commonProps} options={(config.options ?? []) as Array<{ label: string; value: string }>} />;
 
       case "date":
-        return <CoreDateComponent key={`filter-${columnId}`} {...commonProps} />;
+        return <CoreInputDateComponent key={`filter-${columnId}`} {...commonProps} />;
 
       default:
         return null;

@@ -21,7 +21,7 @@ type CoreInputProps<T extends FieldValues> = {
   size?: number;
 };
 
-export function CoreInputComponent<T extends FieldValues>({
+export function CoreInputTextComponent<T extends FieldValues>({
   control,
   name,
   label,

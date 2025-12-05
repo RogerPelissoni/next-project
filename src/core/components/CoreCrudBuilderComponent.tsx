@@ -1,9 +1,9 @@
 "use client";
 
-import CoreCardComponent from "@/core/components/coreCard.component";
-import CoreButtonComponent from "./coreButton.component";
+import CoreCardComponent from "@/core/components/CoreCardComponent";
+import CoreButtonComponent from "./CoreButtonComponent";
 import { useState } from "react";
-import CoreFormComponent from "./coreForm.component";
+import CoreFormComponent from "./CoreFormComponent";
 import { CoreTableComponent } from "@/core/table/CoreTableComponent";
 import { http } from "../utils/http.util";
 import { useCoreTable } from "../table/useCoreTable";

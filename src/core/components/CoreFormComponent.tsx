@@ -7,12 +7,12 @@ import type { Resolver } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 
-import CoreButtonComponent from "./coreButton.component";
-import { CoreInputComponent } from "./coreInput.component";
-import { CoreSelectComponent } from "./coreSelect.component";
-import { CoreDateComponent } from "./coreDate.component";
+import { CoreInputTextComponent } from "./CoreInputTextComponent";
+import { CoreSelectComponent } from "./CoreSelectComponent";
+import { CoreInputDateComponent } from "./CoreInputDateComponent";
 import { IconSave } from "../utils/icon.util";
 import { useCoreForm } from "../form/CoreFormContext";
+import CoreButtonComponent from "./CoreButtonComponent";
 
 type FieldInterface = {
   type: "text" | "password" | "select" | "date";
@@ -56,13 +56,13 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ on
     switch (cfg.type) {
       case "password":
       case "text":
-        return <CoreInputComponent<TFieldValues> key={key} {...commonProps} type={cfg.type === "password" ? "password" : "text"} />;
+        return <CoreInputTextComponent<TFieldValues> key={key} {...commonProps} type={cfg.type === "password" ? "password" : "text"} />;
 
       case "select":
         return <CoreSelectComponent<TFieldValues> key={key} {...commonProps} options={cfg.options ?? []} />;
 
       case "date":
-        return <CoreDateComponent<TFieldValues> key={key} {...commonProps} />;
+        return <CoreInputDateComponent<TFieldValues> key={key} {...commonProps} />;
 
       default:
         return null;

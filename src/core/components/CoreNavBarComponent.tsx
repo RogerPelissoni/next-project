@@ -12,7 +12,7 @@ import {
 
 import { menuConfig } from "@/config/menu";
 
-export function NavBar() {
+export function CoreNavBar() {
   return (
     <div className="px-2">
       <NavigationMenu viewport={false}>

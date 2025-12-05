@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUserResource } from "@/resources/user.resource";
-import CoreCrudBuilderComponent from "@/core/components/coreCrudBuilder.component";
+import CoreCrudBuilderComponent from "@/core/components/CoreCrudBuilderComponent";
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
 import { injectOnFilterFields, injectOnFormFields, injectOnTableColumns } from "@/core/utils/injector.util";
 import { RetrieveMultiple } from "@/core/utils/retrieveMultiple.util";

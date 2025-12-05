@@ -30,7 +30,7 @@ type CoreDateProps<T extends FieldValues> = {
   description?: string;
 };
 
-export function CoreDateComponent<T extends FieldValues>({
+export function CoreInputDateComponent<T extends FieldValues>({
   control,
   name,
   label,

@@ -1,9 +1,9 @@
 import "../globals.css";
 import type { Metadata } from "next";
-import { NavBar } from "@/core/components/navBar.component";
-import { ThemeProvider } from "@/core/providers/theme.provider";
-import { ModeToggle } from "@/core/components/modeToggle.component";
-import { SideMenu } from "@/core/components/sideMenu.component";
+import { CoreNavBar } from "@/core/components/CoreNavBarComponent";
+import { ThemeProvider } from "@/core/providers/ThemeProvider";
+import { CoreModeToggle } from "@/core/components/CoreModeToggleComponent";
+import { CoreSideMenu } from "@/core/components/CoreSideMenuComponent";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,12 +18,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <header className="flex justify-between p-2 border-b">
             <div className="flex items-center gap-2">
               <h2 className="w-[200px] px-2 text-center bg-gray-200">LOGO</h2>
-              <NavBar />
+              <CoreNavBar />
             </div>
 
             <div className="flex items-center px-2 gap-2">
-              <ModeToggle />
-              <SideMenu />
+              <CoreModeToggle />
+              <CoreSideMenu />
             </div>
           </header>
 
