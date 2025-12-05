@@ -16,7 +16,12 @@ import CoreButtonComponent from "@/core/components/coreButton.component";
 import { useCoreTable } from "./useCoreTable";
 import { IconEdit, IconSearch, IconTrash } from "../utils/icon.util";
 
-export function CoreTableComponent<TData>() {
+export type CoreTableComponentProps<TData> = {
+  onEdit?: (record: TData) => void;
+  onDelete?: (record: TData) => void;
+};
+
+export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableComponentProps<TData>) {
   const { data, columns, loading, totalRecords, pagination, setPagination, sorting, setSorting, filters, setFilters, filterConfig } = useCoreTable();
 
   // TODO: O Filter também deverá possuir schema zod, pois podem ter campos obrigatórios
@@ -245,11 +250,11 @@ export function CoreTableComponent<TData>() {
 
                       <TableCell className="w-2.5">
                         <div className="flex gap-2">
-                          <CoreButtonComponent className="h-2 w-2 hover:text-orange-500" variant={null} onClick={() => console.log("Editar:", row.original)}>
+                          <CoreButtonComponent className="h-2 w-2 hover:text-orange-500" variant={null} onClick={() => onEdit?.(row.original as TData)}>
                             <IconEdit />
                           </CoreButtonComponent>
 
-                          <CoreButtonComponent className="h-2 w-2 hover:text-red-500" variant={null} onClick={() => console.log("Remover:", row.original)}>
+                          <CoreButtonComponent className="h-2 w-2 hover:text-red-500" variant={null} onClick={() => onDelete?.(row.original as TData)}>
                             <IconTrash />
                           </CoreButtonComponent>
                         </div>

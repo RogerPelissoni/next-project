@@ -19,7 +19,7 @@ export const tableFilters: TableFiltersInterface = {
   company_id: { type: "select", label: "Empresa", matchMode: "equals" },
 };
 
-export const formState: UserFormSchema = {
+export const formStateInitial: UserFormSchema = {
   id: undefined,
   name: "",
   email: "",
@@ -65,7 +65,7 @@ export const useUserResource = () => ({
   schema: userSchema,
   tableColumns,
   tableFilters,
-  formState,
+  formStateInitial,
   formFields,
   injectors,
 });

@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm, Control, FieldValues, Path, DefaultValues } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Resolver } from "react-hook-form";
 
@@ -13,6 +12,7 @@ import { CoreInputComponent } from "./coreInput.component";
 import { CoreSelectComponent } from "./coreSelect.component";
 import { CoreDateComponent } from "./coreDate.component";
 import { IconSave } from "../utils/icon.util";
+import { useCoreForm } from "../form/CoreFormContext";
 
 type FieldInterface = {
   type: "text" | "password" | "select" | "date";
@@ -20,24 +20,17 @@ type FieldInterface = {
   options?: { label: string; value: string }[];
 };
 
-type FormFieldsShape<T> = {
-  main: {
-    fields: Record<keyof T & string, FieldInterface>;
-  };
-};
-
 export type CoreFormProps<TFieldValues extends FieldValues> = {
-  schema: z.ZodType<TFieldValues, any, any>; // Zod schema que produz TFieldValues no output
-  formFields: FormFieldsShape<TFieldValues>;
-  defaultValues?: DefaultValues<TFieldValues>;
   onSubmit?: (values: TFieldValues) => void | Promise<void>;
   className?: string;
 };
 
-export default function CoreFormComponent<TFieldValues extends FieldValues>({ schema, formFields, defaultValues, onSubmit, className }: CoreFormProps<TFieldValues>) {
+export default function CoreFormComponent<TFieldValues extends FieldValues>({ onSubmit, className }: CoreFormProps<TFieldValues>) {
+  const coreForm = useCoreForm();
+
   const form = useForm<TFieldValues>({
-    resolver: zodResolver(schema) as unknown as Resolver<TFieldValues>,
-    defaultValues: defaultValues as DefaultValues<TFieldValues> | undefined,
+    resolver: zodResolver(coreForm.schema) as unknown as Resolver<TFieldValues>,
+    defaultValues: coreForm.formState as DefaultValues<TFieldValues> | undefined,
   });
 
   const handleSubmit = async (data: TFieldValues) => {
@@ -48,7 +41,7 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ sc
   };
 
   type Key = keyof TFieldValues & string;
-  const keys = Object.keys(formFields.main.fields) as Key[];
+  const keys = Object.keys(coreForm.formFields.main.fields) as Key[];
 
   const renderField = (key: Key, cfg: FieldInterface) => {
     const name = key as Path<TFieldValues>;
@@ -79,7 +72,7 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ sc
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className={`flex flex-wrap items-start space-y-4 mt-4 ${className ?? ""}`}>
-        {keys.map((key) => renderField(key, formFields.main.fields[key]))}
+        {keys.map((key) => renderField(key, coreForm.formFields.main.fields[key]))}
 
         <Separator className="w-full my-2 mb-4" />
 

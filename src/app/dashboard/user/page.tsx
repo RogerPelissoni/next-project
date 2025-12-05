@@ -6,9 +6,7 @@ import CoreCrudBuilderComponent from "@/core/components/coreCrudBuilder.componen
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
 import { injectOnFilterFields, injectOnFormFields, injectOnTableColumns } from "@/core/utils/injector.util";
 import { RetrieveMultiple } from "@/core/utils/retrieveMultiple.util";
-
-// Não remover, exemplo de utilização de contexto na página
-// import { useCoreTable } from "@/core/table/useCoreTable";
+import { CoreFormProvider } from "@/core/form/CoreFormProvider";
 
 export default function UserPage() {
   const userResource = useUserResource();
@@ -40,17 +38,9 @@ export default function UserPage() {
 
   return (
     <CoreTableProvider resource="user" columns={userResource.tableColumns} filterConfig={userResource.tableFilters}>
-      <UserPageContent />
+      <CoreFormProvider resource="user" title="Usuários" schema={userResource.schema} initialState={userResource.formStateInitial} formFields={userResource.formFields}>
+        <CoreCrudBuilderComponent />
+      </CoreFormProvider>
     </CoreTableProvider>
   );
-}
-
-function UserPageContent() {
-  const userResource = useUserResource();
-
-  // Não remover, exemplo de utilização de contexto na página
-  // const coreTable = useCoreTable();
-  // console.log("coreTable", coreTable.columns, coreTable.data);
-
-  return <CoreCrudBuilderComponent resource="user" title="Usuários" schema={userResource.schema} formState={userResource.formState} formFields={userResource.formFields} />;
 }
