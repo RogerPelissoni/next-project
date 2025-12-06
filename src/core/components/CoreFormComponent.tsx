@@ -35,9 +35,6 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ on
 
   const handleSubmit = async (data: TFieldValues) => {
     if (onSubmit) await onSubmit(data);
-    else {
-      console.log("Form submit:", data);
-    }
   };
 
   type Key = keyof TFieldValues & string;

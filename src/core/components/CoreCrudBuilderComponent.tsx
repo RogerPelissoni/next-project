@@ -19,18 +19,23 @@ export default function CoreCrudBuilderComponent() {
   const coreForm = useCoreForm();
   const coreTable = useCoreTable();
 
-  const onSubmitForm = async (values: any) => {
+  const onSubmitForm = async (formValues: any) => {
     try {
-      await http.post(coreForm.resource, values);
+      const isUpdateMethod = !!formValues.id;
+
+      if (isUpdateMethod) {
+        await http.patch(coreForm.resource, formValues);
+      } else {
+        await http.post(coreForm.resource, formValues);
+      }
+
       setIsOpenForm(false);
       coreTable.reload();
 
-      // TODO: Enviar mensagem de sucesso (toast)
-      console.log("Operação efetuada com sucesso!");
-    } catch (error) {
-      // TODO: Enviar mensagem de error (toast)
-      // TODO: Efetuar padronização de erros
-      console.log("Ocorreram problemas durante a operação!", error);
+      toast.success("Operação efetuada com sucesso!");
+    } catch (error: any) {
+      const errorMessage = error?.message;
+      toast.success(`Ocorreram problemas durante a operação: ${errorMessage}`);
     }
   };
 
@@ -40,8 +45,6 @@ export default function CoreCrudBuilderComponent() {
   };
 
   const handleEdit = (record: any) => {
-    console.log("record", record);
-
     coreForm.setFormState(record);
     setIsOpenForm(true);
   };
@@ -60,12 +63,13 @@ export default function CoreCrudBuilderComponent() {
     if (!confirmed) return;
 
     try {
-      await http.delete(`${coreForm.resource}/${record.id}`);
+      await http.delete(coreForm.resource, record);
       coreTable.reload();
 
       toast.success("Operação efetuada com sucesso!");
     } catch (error: any) {
-      toast.error(`Ocorreram problemas durante a operação: ${error}`);
+      const errorMessage = error?.message;
+      toast.error(`Ocorreram problemas durante a operação: ${errorMessage}`);
     }
   };
 

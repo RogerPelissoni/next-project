@@ -15,14 +15,13 @@ async function sendGet(resource: string, query?: Record<string, any>) {
   const qs = buildQuery(query);
   const url = `/api/get?resource=${resource}${qs ? `&${qs}` : ""}`;
 
-  const res = await fetch(url, {
+  const fetchResponse = await fetch(url, {
     method: "GET",
     credentials: "include",
   });
 
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) throw new Error(data.message || `Erro ${res.status}`);
+  const data = await fetchResponse.json().catch(() => ({}));
+  if (!fetchResponse.ok) throw new Error(data.message || `Erro ${fetchResponse.status}`);
 
   return data;
 }
@@ -66,16 +65,16 @@ async function sendWithBody(method: string, resource: string, data?: Record<stri
     headers["Content-Type"] = "application/json";
   }
 
-  const res = await fetch(`/api/${method.toLowerCase()}`, {
+  const fetchResponse = await fetch("/api/proxy", {
     method: "POST",
     credentials: "include",
     headers,
     body,
   });
 
-  const json = await res.json().catch(() => ({}));
+  const json = await fetchResponse.json().catch(() => ({}));
 
-  if (!res.ok) throw new Error(json.message || `Erro ${res.status}`);
+  if (!fetchResponse.ok) throw new Error(json.message || `Erro ${fetchResponse.status}`);
 
   return json;
 }
@@ -83,6 +82,6 @@ async function sendWithBody(method: string, resource: string, data?: Record<stri
 export const http = {
   get: (resource: string, query?: any) => sendGet(resource, query),
   post: (resource: string, data?: any) => sendWithBody("POST", resource, data),
-  put: (resource: string, data?: any) => sendWithBody("PUT", resource, data),
+  patch: (resource: string, data?: any) => sendWithBody("PATCH", resource, data),
   delete: (resource: string, data?: any) => sendWithBody("DELETE", resource, data),
 };
