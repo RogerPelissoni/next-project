@@ -10,7 +10,7 @@ export default function CompanyPage() {
 
   return (
     <CoreTableProvider resource="company" columns={rsCompany.tableColumns} filterConfig={rsCompany.tableFilters}>
-      <CoreFormProvider resource="company" title="Empresa" schema={rsCompany.schema} initialState={rsCompany.formStateInitial} formFields={rsCompany.formFields}>
+      <CoreFormProvider resource="company" title="Empresas" schema={rsCompany.schema} initialState={rsCompany.formStateInitial} formFields={rsCompany.formFields}>
         <CoreCrudBuilderComponent />
       </CoreFormProvider>
     </CoreTableProvider>
