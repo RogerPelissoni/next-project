@@ -15,8 +15,9 @@ export const menuConfig: MenuItem[] = [
   {
     label: "Cadastros",
     children: [
-      { label: "Usuários", href: "/dashboard/user" },
+      { label: "Empresas", href: "/dashboard/company" },
       { label: "Perfis", href: "/dashboard/profile" },
+      { label: "Usuários", href: "/dashboard/user" },
     ],
   },
   {
