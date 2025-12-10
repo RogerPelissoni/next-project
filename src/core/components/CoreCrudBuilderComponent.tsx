@@ -12,21 +12,30 @@ import { useCoreForm } from "../form/CoreFormContext";
 import { toast } from "../utils/toast.util";
 import { useSwalConfirm } from "../providers/ConfirmDialogProvider";
 
-export default function CoreCrudBuilderComponent() {
+interface Props {
+  onEnterCreate?: () => void;
+  onEnterUpdate?: (formState: any) => void;
+  fnBeforeSubmitForm?: (formState: any) => void;
+  templateFormBottom?: React.ReactNode;
+}
+
+export default function CoreCrudBuilderComponent({ onEnterCreate, onEnterUpdate, fnBeforeSubmitForm, templateFormBottom }: Props) {
   const [isOpenForm, setIsOpenForm] = useState(false);
   const toggleForm = () => setIsOpenForm(!isOpenForm);
 
   const coreForm = useCoreForm();
   const coreTable = useCoreTable();
 
-  const onSubmitForm = async (formValues: any) => {
+  const onSubmitForm = async (formState: any) => {
     try {
-      const isUpdateMethod = !!formValues.id;
+      const isUpdateMethod = !!formState.id;
+
+      if (fnBeforeSubmitForm) fnBeforeSubmitForm(formState);
 
       if (isUpdateMethod) {
-        await http.patch(coreForm.resource, formValues);
+        await http.patch(coreForm.resource, formState);
       } else {
-        await http.post(coreForm.resource, formValues);
+        await http.post(coreForm.resource, formState);
       }
 
       setIsOpenForm(false);
@@ -41,11 +50,13 @@ export default function CoreCrudBuilderComponent() {
 
   const handleCreate = () => {
     coreForm.reset();
+    if (onEnterCreate) onEnterCreate();
     toggleForm();
   };
 
-  const handleEdit = (record: any) => {
-    coreForm.setFormState(record);
+  const handleEdit = (formState: any) => {
+    coreForm.setFormState(formState);
+    if (onEnterUpdate) onEnterUpdate(formState);
     setIsOpenForm(true);
   };
 
@@ -89,7 +100,7 @@ export default function CoreCrudBuilderComponent() {
           )}
         </CoreButtonComponent>
       }
-      content={isOpenForm ? <CoreFormComponent onSubmit={onSubmitForm} /> : <CoreTableComponent onEdit={handleEdit} onDelete={handleDelete} />}
+      content={isOpenForm ? <CoreFormComponent onSubmit={onSubmitForm} templateBottom={templateFormBottom} /> : <CoreTableComponent onEdit={handleEdit} onDelete={handleDelete} />}
     />
   );
 }

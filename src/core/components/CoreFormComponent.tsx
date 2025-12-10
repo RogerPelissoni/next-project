@@ -23,9 +23,10 @@ type FieldInterface = {
 export type CoreFormProps<TFieldValues extends FieldValues> = {
   onSubmit?: (values: TFieldValues) => void | Promise<void>;
   className?: string;
+  templateBottom?: React.ReactNode;
 };
 
-export default function CoreFormComponent<TFieldValues extends FieldValues>({ onSubmit, className }: CoreFormProps<TFieldValues>) {
+export default function CoreFormComponent<TFieldValues extends FieldValues>({ onSubmit, className, templateBottom }: CoreFormProps<TFieldValues>) {
   const coreForm = useCoreForm();
 
   const form = useForm<TFieldValues>({
@@ -70,6 +71,8 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ on
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className={`flex flex-wrap items-start space-y-4 mt-4 ${className ?? ""}`}>
         {keys.map((key) => renderField(key, coreForm.formFields.main.fields[key]))}
+
+        {templateBottom}
 
         <Separator className="w-full my-2 mb-4" />
 
