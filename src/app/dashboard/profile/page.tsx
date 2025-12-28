@@ -3,12 +3,12 @@
 import CoreCrudBuilderComponent from "@/core/components/CoreCrudBuilderComponent";
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
 import { CoreFormProvider } from "@/core/form/CoreFormProvider";
-import { useProfileResource } from "@/resources/profile.resource";
+import { initProfileResource } from "@/resources/profile.resource";
 import { useEffect, useState } from "react";
 import { RetrieveMultiple } from "@/core/utils/retrieveMultiple.util";
-import { injectOnFormFields, injectOnTableColumns } from "@/core/utils/injector.util";
 import { http } from "@/core/utils/http.util";
 import { CoreUncoupledSelect } from "@/core/components/CoreUncoupledSelectComponent";
+import { KeyValueType } from "@/core/utils/core.util";
 
 interface ProfilePermissionInterface {
   profile_permission_id: number | undefined;
@@ -18,8 +18,8 @@ interface ProfilePermissionInterface {
 }
 
 export default function ProfilePage() {
-  const rsProfile = useProfileResource();
-  const [loaded, setLoaded] = useState(false);
+  const [kvCompany, setKvCompany] = useState<KeyValueType>();
+  const [loading, setLoading] = useState(false);
   const [obProfilePermissions, setObProfilePermissions] = useState<ProfilePermissionInterface[]>([]);
 
   async function onEnterCreate() {
@@ -36,23 +36,19 @@ export default function ProfilePage() {
   }
 
   useEffect(() => {
-    const fetchResources = async () => {
-      try {
-        const { kvCompany } = await RetrieveMultiple.get([{ resource: "company", keyValue: true, alias: "kvCompany" }]);
-
-        injectOnFormFields(rsProfile.formFields, rsProfile.injectors.formFields(kvCompany));
-        injectOnTableColumns(rsProfile.tableColumns, rsProfile.injectors.tableColumns(kvCompany));
-      } catch (error) {
-        console.error("Erro ao buscar resources:", error);
-      } finally {
-        setLoaded(true);
-      }
-    };
-
-    fetchResources();
+    RetrieveMultiple.get([{ resource: "company", keyValue: true, alias: "kvCompany" }])
+      .then((res) => {
+        setKvCompany(res.kvCompany);
+      })
+      .catch((error) => console.error("Erro ao buscar resources: ", error))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (!loaded) return <div>Carregando...</div>;
+  if (loading || !kvCompany) {
+    return <div>Carregando...</div>;
+  }
+
+  const rsProfile = initProfileResource({ kvCompany });
 
   return (
     <CoreTableProvider resource="profile" columns={rsProfile.tableColumns} filterConfig={rsProfile.tableFilters}>

@@ -1,4 +1,4 @@
-import { KeyValueType } from "@/core/utils/core.util";
+import { KeyValueType, OptionType } from "@/core/utils/core.util";
 
 export type FormFieldsInterface<T extends string, S> = {
   [K in T]: {
@@ -10,7 +10,7 @@ export interface FieldInterface {
   type: "text" | "password" | "select";
   label: string;
   disabled?: boolean;
-  options?: { label: string; value: string }[];
+  options?: OptionType[];
 }
 
 export type TableColumnInterface = TableColumnSingle[];
