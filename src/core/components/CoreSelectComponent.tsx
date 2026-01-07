@@ -4,11 +4,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescripti
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 import { Control, FieldValues, Path } from "react-hook-form";
-
-type Option = {
-  label: string;
-  value: string;
-};
+import { OptionType } from "../utils/core.util";
 
 type CoreSelectProps<T extends FieldValues> = {
   control: Control<T>;
@@ -16,7 +12,7 @@ type CoreSelectProps<T extends FieldValues> = {
   label?: string;
   description?: string;
   placeholder?: string;
-  options: Option[];
+  options: OptionType[];
 };
 
 export function CoreSelectComponent<T extends FieldValues>({ control, name, label, description, placeholder = "Selecione...", options }: CoreSelectProps<T>) {

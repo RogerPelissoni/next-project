@@ -6,6 +6,7 @@ import { CoreModeToggle } from "@/core/components/CoreModeToggleComponent";
 import { CoreSideMenu } from "@/core/components/CoreSideMenuComponent";
 import { SwalConfirmProvider } from "@/core/providers/ConfirmDialogProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { Gem } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const actualYear = new Date().getFullYear();
+
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col">
@@ -20,7 +23,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SwalConfirmProvider>
             <header className="flex justify-between p-2 border-b">
               <div className="flex items-center gap-2">
-                <h2 className="w-[200px] px-2 text-center bg-gray-200">LOGO</h2>
+                <h2 className="ml-4 px-2 text-center">
+                  <Gem />
+                </h2>
                 <CoreNavBar />
               </div>
               <div className="flex items-center px-2 gap-2">
@@ -33,8 +38,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <Toaster position="top-right" />
 
-            <footer className="p-4 border-t">
-              <h2>footer</h2>
+            <footer className="flex items-center p-2 border-t">
+              <small>
+                Desenvolvido por <b>Roger Pelissoni</b> ©{actualYear}
+              </small>
             </footer>
           </SwalConfirmProvider>
         </ThemeProvider>

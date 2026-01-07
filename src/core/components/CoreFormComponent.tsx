@@ -13,20 +13,22 @@ import { CoreInputDateComponent } from "./CoreInputDateComponent";
 import { IconSave } from "../utils/icon.util";
 import { useCoreForm } from "../form/CoreFormContext";
 import CoreButtonComponent from "./CoreButtonComponent";
+import { OptionType } from "../utils/core.util";
 
 type FieldInterface = {
   type: "text" | "password" | "select" | "date";
   label: string;
-  options?: { label: string; value: string }[];
+  options?: OptionType[];
 };
 
 export type CoreFormProps<TFieldValues extends FieldValues> = {
   onSubmit?: (values: TFieldValues) => void | Promise<void>;
   className?: string;
   templateBottom?: React.ReactNode;
+  submitButtonText: string;
 };
 
-export default function CoreFormComponent<TFieldValues extends FieldValues>({ onSubmit, className, templateBottom }: CoreFormProps<TFieldValues>) {
+export default function CoreFormComponent<TFieldValues extends FieldValues>({ onSubmit, className, templateBottom, submitButtonText = "Salvar" }: CoreFormProps<TFieldValues>) {
   const coreForm = useCoreForm();
 
   const form = useForm<TFieldValues>({
@@ -78,7 +80,7 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ on
 
         <div className="w-full flex justify-end">
           <CoreButtonComponent type="submit">
-            <IconSave /> Salvar
+            <IconSave /> {submitButtonText}
           </CoreButtonComponent>
         </div>
       </form>

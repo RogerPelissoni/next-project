@@ -9,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const actualYear = new Date().getFullYear();
+
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className="min-h-screen flex flex-col">
@@ -19,8 +21,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <main className="flex-1">{children}</main>
 
-          <footer className="p-4 border-t">
-            <h2>footer</h2>
+          <footer className="flex items-center p-2 border-t">
+            <small>
+              Desenvolvido por <b>Roger Pelissoni</b> ©{actualYear}
+            </small>
           </footer>
         </ThemeProvider>
       </body>
