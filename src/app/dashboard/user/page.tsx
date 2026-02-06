@@ -1,53 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { initUserResource } from "@/resources/user.resource";
+import { API_ENDPOINTS } from "@/constants/api.constants";
+import { RESOURCES } from "@/constants/resources.constants";
 import CoreCrudBuilderComponent from "@/core/components/CoreCrudBuilderComponent";
-import { CoreTableProvider } from "@/core/table/CoreTableProvider";
+import { CoreScreenWrapper } from "@/core/components/CoreScreenWrapper";
 import { CoreFormProvider } from "@/core/form/CoreFormProvider";
-import { KeyValueType } from "@/core/utils/core.util";
-import { http } from "@/core/utils/http.util";
+import { useScreenData } from "@/core/hooks/useScreenData";
+import { CoreTableProvider } from "@/core/table/CoreTableProvider";
 import { useCoreTable } from "@/core/table/useCoreTable";
-import { UserFormSchema } from "@/schemas/user.schema";
-import { MainDataPayload } from "@/core/types/core.types";
-
-type UserResourceType = ReturnType<typeof initUserResource>;
-
-interface UserPageContentProps {
-  rsUser: UserResourceType;
-  obUser: MainDataPayload<UserFormSchema>;
-}
+import { initUserResource } from "@/resources/user.resource";
+import { UserPageContentProps, UserScreenData } from "@/types/user.types";
+import { useEffect } from "react";
 
 export default function UserPage() {
-  const [obUser, setObUser] = useState<MainDataPayload<UserFormSchema>>({ data: [], total: 0 });
-  const [kvProfile, setKvProfile] = useState<KeyValueType>();
-  const [kvCompany, setKvCompany] = useState<KeyValueType>();
-  const [kvPerson, setKvPerson] = useState<KeyValueType>();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    http
-      .get("user/screen")
-      .then(({ obUser, kvProfile, kvCompany, kvPerson }) => {
-        setObUser(obUser);
-        setKvProfile(kvProfile);
-        setKvCompany(kvCompany);
-        setKvPerson(kvPerson);
-      })
-      .catch((error) => console.error("Erro ao buscar resources:", error))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading || !kvProfile || !kvCompany || !kvPerson) {
-    return <div>Carregando...</div>;
-  }
-
-  const rsUser = initUserResource({ kvProfile, kvCompany, kvPerson });
+  const { data, loading, error } = useScreenData<UserScreenData>(API_ENDPOINTS.USER.SCREEN);
 
   return (
-    <CoreTableProvider resource="user" columns={rsUser.tableColumns} filterConfig={rsUser.tableFilters}>
-      <UserPageContent rsUser={rsUser} obUser={obUser} />
-    </CoreTableProvider>
+    <CoreScreenWrapper
+      data={data}
+      loading={loading}
+      error={error}
+      validateData={(data) => !!(data?.obUser && data?.kvProfile && data?.kvCompany && data?.kvPerson)}
+    >
+      {(screenData) => {
+        const rsUser = initUserResource({
+          kvProfile: screenData.kvProfile,
+          kvCompany: screenData.kvCompany,
+          kvPerson: screenData.kvPerson,
+        });
+
+        return (
+          <CoreTableProvider
+            resource={RESOURCES.USER.key}
+            columns={rsUser.tableColumns}
+            filterConfig={rsUser.tableFilters}
+          >
+            <UserPageContent rsUser={rsUser} obUser={screenData.obUser} />
+          </CoreTableProvider>
+        );
+      }}
+    </CoreScreenWrapper>
   );
 }
 
@@ -61,8 +53,8 @@ function UserPageContent({ rsUser, obUser }: UserPageContentProps) {
 
   return (
     <CoreFormProvider
-      resource="user"
-      title="Usuários"
+      resource={RESOURCES.USER.key}
+      title={RESOURCES.USER.title}
       schema={rsUser.schema}
       initialState={rsUser.formStateInitial}
       formFields={rsUser.formFields}
