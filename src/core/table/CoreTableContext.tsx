@@ -23,7 +23,9 @@ export interface CoreTableContextType<T> {
   reload: () => Promise<void>;
 
   loading: boolean;
+
   totalRecords: number;
+  setTotalRecords: React.Dispatch<React.SetStateAction<number>>;
 
   columns: ColumnDef<T>[];
 

@@ -2,27 +2,31 @@ import { UserFormSchema, userSchema } from "@/schemas/user.schema";
 import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/core/types/core.types";
 import { KeyValueType, toOptions } from "@/core/utils/core.util";
 
-interface ResourceOptionsInterface {
+interface ResourceParamsInterface {
   kvProfile: KeyValueType;
   kvCompany: KeyValueType;
   kvPerson: KeyValueType;
 }
 
-export const initUserResource = (options: ResourceOptionsInterface) => {
+export const initUserResource = (params: ResourceParamsInterface) => {
+  const opProfile = toOptions(params.kvProfile);
+  const opCompany = toOptions(params.kvCompany);
+  const opPerson = toOptions(params.kvPerson);
+
   const tableColumns: TableColumnInterface = [
     { accessorKey: "id", header: "#" },
     { accessorKey: "name", header: "Nome" },
     { accessorKey: "email", header: "Email" },
-    { accessorKey: "person_id", header: "Pessoa", keyValue: options.kvPerson },
-    { accessorKey: "profile_id", header: "Perfil", keyValue: options.kvProfile },
-    { accessorKey: "company_id", header: "Empresa", keyValue: options.kvCompany },
+    { accessorKey: "person_id", header: "Pessoa", keyValue: params.kvPerson },
+    { accessorKey: "profile_id", header: "Perfil", keyValue: params.kvProfile },
+    { accessorKey: "company_id", header: "Empresa", keyValue: params.kvCompany },
   ];
 
   const tableFilters: TableFiltersInterface = {
     name: { type: "text", label: "Nome", matchMode: "like" },
     email: { type: "text", label: "Email", matchMode: "like" },
-    profile_id: { type: "select", label: "Perfil", matchMode: "equals", options: toOptions(options.kvProfile) },
-    company_id: { type: "select", label: "Empresa", matchMode: "equals", options: toOptions(options.kvCompany) },
+    profile_id: { type: "select", label: "Perfil", matchMode: "equals", options: opProfile },
+    company_id: { type: "select", label: "Empresa", matchMode: "equals", options: opCompany },
   };
 
   const formStateInitial: UserFormSchema = {
@@ -42,9 +46,9 @@ export const initUserResource = (options: ResourceOptionsInterface) => {
         name: { type: "text", label: "Nome" },
         email: { type: "text", label: "Email" },
         password: { type: "password", label: "Senha" },
-        person_id: { type: "select", label: "Pessoa", options: toOptions(options.kvPerson) },
-        profile_id: { type: "select", label: "Perfil", options: toOptions(options.kvProfile) },
-        company_id: { type: "select", label: "Empresa", options: toOptions(options.kvCompany) },
+        person_id: { type: "select", label: "Pessoa", options: opPerson },
+        profile_id: { type: "select", label: "Perfil", options: opProfile },
+        company_id: { type: "select", label: "Empresa", options: opCompany },
       },
     },
   };

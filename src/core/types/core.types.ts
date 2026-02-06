@@ -32,3 +32,8 @@ export interface TableFilterConfig {
 }
 
 export type TableFiltersInterface = Record<string, TableFilterConfig>;
+
+export type MainDataPayload<TData> = {
+  data: TData[];
+  total: number;
+};

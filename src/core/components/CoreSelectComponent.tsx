@@ -15,7 +15,14 @@ type CoreSelectProps<T extends FieldValues> = {
   options: OptionType[];
 };
 
-export function CoreSelectComponent<T extends FieldValues>({ control, name, label, description, placeholder = "Selecione...", options }: CoreSelectProps<T>) {
+export function CoreSelectComponent<T extends FieldValues>({
+  control,
+  name,
+  label,
+  description,
+  placeholder = "Selecione...",
+  options,
+}: CoreSelectProps<T>) {
   return (
     <FormField
       control={control}
@@ -25,7 +32,10 @@ export function CoreSelectComponent<T extends FieldValues>({ control, name, labe
           {label && <FormLabel>{label}</FormLabel>}
 
           <FormControl>
-            <Select value={field.value ?? "__empty"} onValueChange={(v) => field.onChange(v === "__empty" ? undefined : v)}>
+            <Select
+              value={field.value ?? "__empty"}
+              onValueChange={(v) => field.onChange(v === "__empty" ? undefined : v)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>

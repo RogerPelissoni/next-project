@@ -8,6 +8,13 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      
+      "prettier/prettier": [
+        "warn",
+        {
+          printWidth: 120,
+        },
+      ],
     },
   },
   globalIgnores([
