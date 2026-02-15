@@ -1,16 +1,16 @@
 "use client";
 
 import CoreCardComponent from "@/core/components/CoreCardComponent";
-import CoreButtonComponent from "./CoreButtonComponent";
-import { useState } from "react";
-import CoreFormComponent from "./CoreFormComponent";
 import { CoreTableComponent } from "@/core/table/CoreTableComponent";
-import { http } from "../utils/http.util";
-import { useCoreTable } from "../table/useCoreTable";
-import { IconPlus, IconUndo } from "../utils/icon.util";
+import { useState } from "react";
 import { useCoreForm } from "../form/CoreFormContext";
-import { toast } from "../utils/toast.util";
 import { useSwalConfirm } from "../providers/ConfirmDialogProvider";
+import { useCoreTable } from "../table/useCoreTable";
+import { http } from "../utils/http.util";
+import { IconPlus, IconUndo } from "../utils/icon.util";
+import { toast } from "../utils/toast.util";
+import CoreButtonComponent from "./CoreButtonComponent";
+import CoreFormComponent from "./CoreFormComponent";
 
 interface Props {
   onEnterCreate?: () => void;
@@ -19,7 +19,12 @@ interface Props {
   templateFormBottom?: React.ReactNode;
 }
 
-export default function CoreCrudBuilderComponent({ onEnterCreate, onEnterUpdate, fnBeforeSubmitForm, templateFormBottom }: Props) {
+export default function CoreCrudBuilderComponent({
+  onEnterCreate,
+  onEnterUpdate,
+  fnBeforeSubmitForm,
+  templateFormBottom,
+}: Props) {
   const [isOpenForm, setIsOpenForm] = useState(false);
   const toggleForm = () => setIsOpenForm(!isOpenForm);
 
@@ -100,7 +105,13 @@ export default function CoreCrudBuilderComponent({ onEnterCreate, onEnterUpdate,
           )}
         </CoreButtonComponent>
       }
-      content={isOpenForm ? <CoreFormComponent onSubmit={onSubmitForm} templateBottom={templateFormBottom} /> : <CoreTableComponent onEdit={handleEdit} onDelete={handleDelete} />}
+      content={
+        isOpenForm ? (
+          <CoreFormComponent onSubmit={onSubmitForm} templateBottom={templateFormBottom} />
+        ) : (
+          <CoreTableComponent onEdit={handleEdit} onDelete={handleDelete} />
+        )
+      }
     />
   );
 }

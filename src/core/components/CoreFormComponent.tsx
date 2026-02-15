@@ -1,19 +1,17 @@
 "use client";
 
-import { useForm, Control, FieldValues, Path, DefaultValues } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { Resolver } from "react-hook-form";
-
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { Resolver } from "react-hook-form";
+import { Control, DefaultValues, FieldValues, Path, useForm } from "react-hook-form";
+import { useCoreForm } from "../form/CoreFormContext";
+import { OptionType } from "../utils/core.util";
+import { IconSave } from "../utils/icon.util";
+import CoreButtonComponent from "./CoreButtonComponent";
+import { CoreInputDateComponent } from "./CoreInputDateComponent";
 import { CoreInputTextComponent } from "./CoreInputTextComponent";
 import { CoreSelectComponent } from "./CoreSelectComponent";
-import { CoreInputDateComponent } from "./CoreInputDateComponent";
-import { IconSave } from "../utils/icon.util";
-import { useCoreForm } from "../form/CoreFormContext";
-import CoreButtonComponent from "./CoreButtonComponent";
-import { OptionType } from "../utils/core.util";
 
 type FieldInterface = {
   type: "text" | "password" | "select" | "date";
@@ -25,10 +23,15 @@ export type CoreFormProps<TFieldValues extends FieldValues> = {
   onSubmit?: (values: TFieldValues) => void | Promise<void>;
   className?: string;
   templateBottom?: React.ReactNode;
-  submitButtonText: string;
+  submitButtonText?: string;
 };
 
-export default function CoreFormComponent<TFieldValues extends FieldValues>({ onSubmit, className, templateBottom, submitButtonText = "Salvar" }: CoreFormProps<TFieldValues>) {
+export default function CoreFormComponent<TFieldValues extends FieldValues>({
+  onSubmit,
+  className,
+  templateBottom,
+  submitButtonText = "Salvar",
+}: CoreFormProps<TFieldValues>) {
   const coreForm = useCoreForm();
 
   const form = useForm<TFieldValues>({
@@ -56,7 +59,13 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ on
     switch (cfg.type) {
       case "password":
       case "text":
-        return <CoreInputTextComponent<TFieldValues> key={key} {...commonProps} type={cfg.type === "password" ? "password" : "text"} />;
+        return (
+          <CoreInputTextComponent<TFieldValues>
+            key={key}
+            {...commonProps}
+            type={cfg.type === "password" ? "password" : "text"}
+          />
+        );
 
       case "select":
         return <CoreSelectComponent<TFieldValues> key={key} {...commonProps} options={cfg.options ?? []} />;
@@ -71,7 +80,10 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({ on
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className={`flex flex-wrap items-start space-y-4 mt-4 ${className ?? ""}`}>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className={`flex flex-wrap items-start space-y-4 mt-4 ${className ?? ""}`}
+      >
         {keys.map((key) => renderField(key, coreForm.formFields.main.fields[key]))}
 
         {templateBottom}

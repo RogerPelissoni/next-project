@@ -1,0 +1,25 @@
+import { PersonGenderEnum } from "@/enums/personGender.enum";
+import { z } from "zod";
+
+export const personSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(3).max(150),
+  ds_document: z.string().max(20).optional().nullable(),
+  ds_email: z.string().email().max(100).optional().nullable(),
+  ds_phone: z.string().max(20).optional().nullable(),
+  da_birth: z
+    .union([z.string().refine((val) => !val || !isNaN(Date.parse(val)), "Data inválida"), z.date()])
+    .optional()
+    .nullable(),
+  tp_gender: z.enum(Object.keys(PersonGenderEnum)).optional().nullable(),
+  ds_address_street: z.string().max(120).optional().nullable(),
+  ds_address_number: z.string().max(20).optional().nullable(),
+  ds_address_complement: z.string().max(60).optional().nullable(),
+  ds_address_district: z.string().max(80).optional().nullable(),
+  ds_address_city: z.string().max(80).optional().nullable(),
+  ds_address_state: z.string().length(2).optional().nullable(),
+  ds_address_zipcode: z.string().max(10).optional().nullable(),
+  fl_active: z.boolean().default(true),
+});
+
+export type PersonFormSchema = z.infer<typeof personSchema>;

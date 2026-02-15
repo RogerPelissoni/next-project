@@ -7,7 +7,7 @@ export type FormFieldsInterface<T extends string, S> = {
 };
 
 export interface FieldInterface {
-  type: "text" | "password" | "select";
+  type: "text" | "password" | "select" | "date";
   label: string;
   disabled?: boolean;
   options?: OptionType[];

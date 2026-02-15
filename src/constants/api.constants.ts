@@ -10,6 +10,9 @@ export const API_ENDPOINTS = {
     SCREEN: "company/screen",
     LIST: "company/list",
   },
+  PERSON: {
+    SCREEN: "person/screen",
+  },
   PROFILE: {
     SCREEN: "profile/screen",
     LIST: "profile/list",

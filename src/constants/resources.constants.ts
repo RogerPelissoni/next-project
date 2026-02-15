@@ -11,6 +11,12 @@ export const RESOURCES = {
     singular: "Empresa",
     description: "Gerenciamento de empresas",
   },
+  PERSON: {
+    key: "person",
+    title: "Pessoas",
+    singular: "Pessoa",
+    description: "Gerenciamento de pessoas",
+  },
   PROFILE: {
     key: "profile",
     title: "Perfis",
