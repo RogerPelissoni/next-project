@@ -1,20 +1,20 @@
 "use client";
 
-import { useReactTable, getCoreRowModel, flexRender, type ColumnDef, type SortingState } from "@tanstack/react-table";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { flexRender, getCoreRowModel, useReactTable, type ColumnDef, type SortingState } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Form } from "@/components/ui/form";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import CoreButtonComponent from "@/core/components/CoreButtonComponent";
+import { CoreInputDateComponent } from "@/core/components/CoreInputDateComponent";
 import { CoreInputTextComponent } from "@/core/components/CoreInputTextComponent";
 import { CoreSelectComponent } from "@/core/components/CoreSelectComponent";
-import { CoreInputDateComponent } from "@/core/components/CoreInputDateComponent";
-import CoreButtonComponent from "@/core/components/CoreButtonComponent";
-import { useCoreTable } from "./useCoreTable";
 import { IconEdit, IconSearch, IconTrash } from "../utils/icon.util";
+import { useCoreTable } from "./useCoreTable";
 
 export type CoreTableComponentProps<TData> = {
   onEdit?: (record: TData) => void;
@@ -22,7 +22,19 @@ export type CoreTableComponentProps<TData> = {
 };
 
 export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableComponentProps<TData>) {
-  const { data, columns, loading, totalRecords, pagination, setPagination, sorting, setSorting, filters, setFilters, filterConfig } = useCoreTable();
+  const {
+    data,
+    columns,
+    loading,
+    totalRecords,
+    pagination,
+    setPagination,
+    sorting,
+    setSorting,
+    filters,
+    setFilters,
+    filterConfig,
+  } = useCoreTable();
 
   // TODO: O Filter também deverá possuir schema zod, pois podem ter campos obrigatórios
   const createFilterSchema = () => {
@@ -63,7 +75,10 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
 
   const filterForm = useForm<FilterFormValues>({
     resolver: zodResolver(filterSchema),
-    defaultValues: Object.keys(filterConfig || {}).reduce((acc, key) => ({ ...acc, [key]: "" }), {}) as FilterFormValues,
+    defaultValues: Object.keys(filterConfig || {}).reduce(
+      (acc, key) => ({ ...acc, [key]: "" }),
+      {},
+    ) as FilterFormValues,
     mode: "onChange",
   });
 
@@ -139,7 +154,13 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
         );
 
       case "select":
-        return <CoreSelectComponent key={`filter-${columnId}`} {...commonProps} options={(config.options ?? []) as Array<{ label: string; value: string }>} />;
+        return (
+          <CoreSelectComponent
+            key={`filter-${columnId}`}
+            {...commonProps}
+            options={(config.options ?? []) as Array<{ label: string; value: string }>}
+          />
+        );
 
       case "date":
         return <CoreInputDateComponent key={`filter-${columnId}`} {...commonProps} />;
@@ -217,7 +238,9 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
                         }}
                       >
                         <div className="flex items-center gap-2">
-                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(header.column.columnDef.header, header.getContext())}
                           {/* Indicador de ordenação */}
                           {sorting[0]?.id === header.id && (sorting[0].desc ? " ↓" : " ↑")}
                         </div>
@@ -250,11 +273,19 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
 
                       <TableCell className="w-2.5">
                         <div className="flex gap-2">
-                          <CoreButtonComponent className="h-2 w-2 hover:text-orange-500" variant={null} onClick={() => onEdit?.(row.original as TData)}>
+                          <CoreButtonComponent
+                            className="h-2 w-2 hover:text-orange-500"
+                            variant={null}
+                            onClick={() => onEdit?.(row.original as TData)}
+                          >
                             <IconEdit />
                           </CoreButtonComponent>
 
-                          <CoreButtonComponent className="h-2 w-2 hover:text-red-500" variant={null} onClick={() => onDelete?.(row.original as TData)}>
+                          <CoreButtonComponent
+                            className="h-2 w-2 hover:text-red-500"
+                            variant={null}
+                            onClick={() => onDelete?.(row.original as TData)}
+                          >
                             <IconTrash />
                           </CoreButtonComponent>
                         </div>
@@ -293,7 +324,9 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
 
               <button
                 className="px-3 py-1 rounded border disabled:opacity-50 cursor-pointer hover:bg-muted"
-                onClick={() => setPagination({ ...pagination, pageIndex: Math.min(pageCount - 1, pagination.pageIndex + 1) })}
+                onClick={() =>
+                  setPagination({ ...pagination, pageIndex: Math.min(pageCount - 1, pagination.pageIndex + 1) })
+                }
                 disabled={pagination.pageIndex >= pageCount - 1}
               >
                 Próxima

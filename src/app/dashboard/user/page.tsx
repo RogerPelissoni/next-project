@@ -49,7 +49,7 @@ function UserPageContent({ rsUser, obUser }: UserPageContentProps) {
   useEffect(() => {
     coreTable.setData(obUser.data);
     coreTable.setTotalRecords(obUser.total);
-  }, [obUser, coreTable]);
+  }, []);
 
   return (
     <CoreFormProvider

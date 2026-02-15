@@ -1,11 +1,11 @@
 "use client";
 
-import { ReactNode, useState, useCallback } from "react";
-import { CoreTableContext, ColumnFilter, PaginationState } from "./CoreTableContext";
-import { ColumnDef } from "@tanstack/react-table";
 import { TableFiltersInterface } from "@/core/types/core.types";
+import { ColumnDef } from "@tanstack/react-table";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { http } from "../utils/http.util";
 import { makeTableQueryParams } from "../utils/table.util";
+import { ColumnFilter, CoreTableContext, PaginationState } from "./CoreTableContext";
 
 interface Props<T> {
   resource: string;
@@ -24,17 +24,19 @@ export function CoreTableProvider<T>({ resource, columns, filterConfig, children
 
   const loadData = useCallback(async () => {
     setLoading(true);
-
     try {
       const queryParams = makeTableQueryParams(resource, pagination, filters, sorting);
       const getResponse = await http.get(resource, queryParams);
-
       setData(getResponse.data || []);
       setTotalRecords(getResponse.total || 0);
     } finally {
       setLoading(false);
     }
   }, [resource, pagination, filters, sorting]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   return (
     <CoreTableContext.Provider
