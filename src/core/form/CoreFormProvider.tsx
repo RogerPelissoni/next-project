@@ -1,19 +1,26 @@
 "use client";
 
 import { ReactNode, useState } from "react";
+import { FormFieldsInterface } from "../utils/resource.util";
 import { CoreFormContext, type CoreFormContextType } from "./CoreFormContext";
-import { FormFieldsInterface } from "../types/core.types";
 
 interface Props<T extends Record<string, any>> {
   children: ReactNode;
   initialState: T;
-  formFields: FormFieldsInterface<any, T>;
+  formFields: FormFieldsInterface<any, any>;
   schema: any;
   resource: string;
   title: string;
 }
 
-export function CoreFormProvider<T extends Record<string, any>>({ children, initialState, formFields, schema, resource, title }: Props<T>) {
+export function CoreFormProvider<T extends Record<string, any>>({
+  children,
+  initialState,
+  formFields,
+  schema,
+  resource,
+  title,
+}: Props<T>) {
   const [formState, setFormState] = useState<T>(initialState);
 
   const updateForm = (data: Partial<T>) => {

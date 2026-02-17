@@ -1,10 +1,12 @@
 import { ColumnFilter, PaginationState } from "../table/CoreTableContext";
+import { QuerySchemaType } from "./resource.util";
 
 export function makeTableQueryParams(
   resource: string,
   pagination: PaginationState,
   filters: ColumnFilter[],
   sorting: Array<{ id: string; desc: boolean }>,
+  queryResources?: QuerySchemaType,
 ) {
   const queryParams = {
     resource,
@@ -13,6 +15,7 @@ export function makeTableQueryParams(
     filters: "",
     sortBy: "id",
     sortOrder: "asc",
+    ...queryResources,
   };
 
   // Filters

@@ -8,12 +8,14 @@ import { CoreFormProvider } from "@/core/form/CoreFormProvider";
 import { useScreenData } from "@/core/hooks/useScreenData";
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
 import { useCoreTable } from "@/core/table/useCoreTable";
-import { initPersonResource } from "@/resources/person.resource";
+import { initPersonResource, PERSON_RESOURCE_QUERY } from "@/resources/person.resource";
 import { PersonPageContentProps, PersonScreenData } from "@/types/person.types";
 import { useEffect } from "react";
 
 export default function PersonPage() {
-  const { data, loading, error } = useScreenData<PersonScreenData>(API_ENDPOINTS.PERSON.SCREEN);
+  const { data, loading, error } = useScreenData<PersonScreenData>(API_ENDPOINTS.PERSON.SCREEN, {
+    queryResources: PERSON_RESOURCE_QUERY,
+  });
 
   return (
     <CoreScreenWrapper data={data} loading={loading} error={error} validateData={(data) => !!data?.obPerson}>
@@ -23,8 +25,10 @@ export default function PersonPage() {
         return (
           <CoreTableProvider
             resource={RESOURCES.PERSON.key}
+            queryResources={PERSON_RESOURCE_QUERY}
             columns={rsPerson.tableColumns}
             filterConfig={rsPerson.tableFilters}
+            setInitialData={false}
           >
             <PersonPageContent rsPerson={rsPerson} obPerson={screenData.obPerson} />
           </CoreTableProvider>

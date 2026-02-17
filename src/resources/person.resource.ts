@@ -1,12 +1,41 @@
-import { FormFieldsInterface, TableColumnInterface, TableFiltersInterface } from "@/core/types/core.types";
 import { toOptions } from "@/core/utils/core.util";
+import {
+  FormFieldsInterface,
+  QueryFields,
+  TableColumnInterface,
+  TableFiltersInterface,
+} from "@/core/utils/resource.util";
 import { PersonGenderEnum } from "@/enums/personGender.enum";
-import { PersonFormSchema, personSchema } from "@/schemas/person.schema";
+import { makePersonQueryResources, personSchema } from "@/schemas/person.schema";
+
+export const PERSON_RESOURCE_QUERY = makePersonQueryResources({
+  fields: [
+    "id",
+    "name",
+    "ds_document",
+    "ds_email",
+    "ds_phone",
+    "da_birth",
+    "tp_gender",
+    "ds_address_street",
+    "ds_address_number",
+    "ds_address_complement",
+    "ds_address_district",
+    "ds_address_city",
+    "ds_address_state",
+    "ds_address_zipcode",
+    "fl_active",
+  ],
+  appends: [],
+  hydrators: [],
+});
 
 interface ResourceParamsInterface {}
 
 export const initPersonResource = (params: ResourceParamsInterface = {}) => {
-  const tableColumns: TableColumnInterface = [
+  type PersonQueryFields = QueryFields<typeof PERSON_RESOURCE_QUERY>;
+
+  const tableColumns: TableColumnInterface<PersonQueryFields> = [
     { accessorKey: "id", header: "#" },
     { accessorKey: "name", header: "Nome" },
     { accessorKey: "ds_document", header: "Documento" },
@@ -24,7 +53,7 @@ export const initPersonResource = (params: ResourceParamsInterface = {}) => {
     { accessorKey: "fl_active", header: "Ativo" },
   ];
 
-  const tableFilters: TableFiltersInterface = {
+  const tableFilters: TableFiltersInterface<PersonQueryFields> = {
     name: { type: "text", label: "Nome", matchMode: "like" },
     ds_document: { type: "text", label: "Documento", matchMode: "like" },
     ds_email: { type: "text", label: "Email", matchMode: "like" },
@@ -34,7 +63,7 @@ export const initPersonResource = (params: ResourceParamsInterface = {}) => {
     fl_active: { type: "select", label: "Ativo", matchMode: "equals" },
   };
 
-  const formStateInitial: PersonFormSchema = {
+  const formStateInitial: Record<PersonQueryFields, any> = {
     id: undefined,
     name: "",
     ds_document: "",
@@ -52,7 +81,7 @@ export const initPersonResource = (params: ResourceParamsInterface = {}) => {
     fl_active: true,
   };
 
-  const formFields: FormFieldsInterface<"main", PersonFormSchema> = {
+  const formFields: FormFieldsInterface<"main", PersonQueryFields> = {
     main: {
       fields: {
         id: { type: "text", label: "ID", disabled: true },

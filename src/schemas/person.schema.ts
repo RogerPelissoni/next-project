@@ -1,3 +1,4 @@
+import { createQueryResourceBuilder } from "@/core/utils/resource.util";
 import { PersonGenderEnum } from "@/enums/personGender.enum";
 import { z } from "zod";
 
@@ -23,3 +24,32 @@ export const personSchema = z.object({
 });
 
 export type PersonFormSchema = z.infer<typeof personSchema>;
+type PersonSchemaKeys = keyof z.infer<typeof personSchema>;
+
+export const PERSON_QUERY_SCHEMA = {
+  fields: {
+    id: {},
+    name: {},
+    ds_document: {},
+    ds_email: {},
+    ds_phone: {},
+    da_birth: {},
+    tp_gender: {},
+    ds_address_street: {},
+    ds_address_number: {},
+    ds_address_complement: {},
+    ds_address_district: {},
+    ds_address_city: {},
+    ds_address_state: {},
+    ds_address_zipcode: {},
+    fl_active: {},
+  } satisfies Record<PersonSchemaKeys, any>,
+  appends: {
+    ds_company: {},
+  },
+  hydrators: {
+    personPhone: {},
+  },
+};
+
+export const makePersonQueryResources = createQueryResourceBuilder<typeof PERSON_QUERY_SCHEMA>();
