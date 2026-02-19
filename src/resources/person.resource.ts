@@ -6,7 +6,7 @@ import {
   TableFiltersInterface,
 } from "@/core/utils/resource.util";
 import { PersonGenderEnum } from "@/enums/personGender.enum";
-import { makePersonQueryResources, personSchema } from "@/schemas/person.schema";
+import { makePersonQueryResources, PersonFormSchema, personSchema } from "@/schemas/person.schema";
 
 export const PERSON_RESOURCE_QUERY = makePersonQueryResources({
   fields: [
@@ -30,14 +30,12 @@ export const PERSON_RESOURCE_QUERY = makePersonQueryResources({
   hydrators: [],
 });
 
-interface ResourceParamsInterface {}
-
-export const initPersonResource = (params: ResourceParamsInterface = {}) => {
+export const initPersonResource = () => {
   type PersonQueryFields = QueryFields<typeof PERSON_RESOURCE_QUERY>;
 
   const tableColumns: TableColumnInterface<PersonQueryFields> = [
     { accessorKey: "id", header: "#" },
-    { accessorKey: "name", header: "Nome" },
+    { accessorKey: "name", header: "Nome", field: { type: "text" } },
     { accessorKey: "ds_document", header: "Documento" },
     { accessorKey: "ds_email", header: "Email" },
     { accessorKey: "ds_phone", header: "Telefone" },
@@ -63,7 +61,7 @@ export const initPersonResource = (params: ResourceParamsInterface = {}) => {
     fl_active: { type: "select", label: "Ativo", matchMode: "equals" },
   };
 
-  const formStateInitial: Record<PersonQueryFields, any> = {
+  const formStateInitial: Pick<PersonFormSchema, PersonQueryFields> = {
     id: undefined,
     name: "",
     ds_document: "",

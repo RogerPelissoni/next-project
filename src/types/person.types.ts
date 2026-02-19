@@ -10,5 +10,4 @@ export type PersonResourceConfig = ReturnType<typeof initPersonResource>;
 
 export interface PersonPageContentProps {
   rsPerson: PersonResourceConfig;
-  obPerson: MainDataPayload<PersonFormSchema>;
 }

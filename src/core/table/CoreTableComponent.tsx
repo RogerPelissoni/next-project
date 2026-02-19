@@ -82,6 +82,10 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
     mode: "onChange",
   });
 
+  const tableForm = useForm<{ rows: Record<string, any> }>({
+    defaultValues: { rows: {} },
+  });
+
   const handleFilterClick = () => {
     const currentValues = filterForm.getValues();
     const newFilters: typeof filters = [];
@@ -131,7 +135,7 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
     const config = filterConfig?.[columnId];
     if (!config) return null;
 
-    const commonProps = {
+    const commonFilterFieldProps = {
       control: filterForm.control as any,
       name: columnId as any,
       label: config.label,
@@ -142,14 +146,14 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
       case "text":
         return (
           <div key={`filter-${columnId}`} onKeyDown={handleKeyDown}>
-            <CoreInputTextComponent {...commonProps} type="text" />
+            <CoreInputTextComponent {...commonFilterFieldProps} type="text" />
           </div>
         );
 
       case "number":
         return (
           <div key={`filter-${columnId}`} onKeyDown={handleKeyDown}>
-            <CoreInputTextComponent {...commonProps} type="number" />
+            <CoreInputTextComponent {...commonFilterFieldProps} type="number" />
           </div>
         );
 
@@ -157,13 +161,13 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
         return (
           <CoreSelectComponent
             key={`filter-${columnId}`}
-            {...commonProps}
+            {...commonFilterFieldProps}
             options={(config.options ?? []) as Array<{ label: string; value: string }>}
           />
         );
 
       case "date":
-        return <CoreInputDateComponent key={`filter-${columnId}`} {...commonProps} />;
+        return <CoreInputDateComponent key={`filter-${columnId}`} {...commonFilterFieldProps} />;
 
       default:
         return null;
@@ -221,118 +225,135 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
         </div>
       ) : (
         <>
-          <div className="border rounded-md overflow-hidden">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead
-                        key={header.id}
-                        className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
-                        onClick={() => {
-                          if (header.column.getCanSort()) {
-                            const isDesc = sorting[0]?.id === header.id && sorting[0]?.desc;
-                            setSorting([{ id: header.id, desc: !isDesc }]);
-                          }
-                        }}
-                      >
-                        <div className="flex items-center gap-2">
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
-                          {/* Indicador de ordenação */}
-                          {sorting[0]?.id === header.id && (sorting[0].desc ? " ↓" : " ↑")}
-                        </div>
-                      </TableHead>
-                    ))}
-
-                    <TableHead>Ações</TableHead>
-                  </TableRow>
-                ))}
-              </TableHeader>
-
-              <TableBody>
-                {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="hover:bg-muted/50">
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {(() => {
-                            const colDef: any = cell.column.columnDef;
-                            const rawValue = cell.getValue() as string | number;
-
-                            if (colDef.keyValue && rawValue !== undefined && rawValue !== null) {
-                              return colDef.keyValue[rawValue] ?? rawValue;
+          <Form {...tableForm}>
+            <div className="border rounded-md overflow-hidden">
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <TableHead
+                          key={header.id}
+                          className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
+                          onClick={() => {
+                            if (header.column.getCanSort()) {
+                              const isDesc = sorting[0]?.id === header.id && sorting[0]?.desc;
+                              setSorting([{ id: header.id, desc: !isDesc }]);
                             }
-
-                            return flexRender(colDef.cell, cell.getContext());
-                          })()}
-                        </TableCell>
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                            {/* Indicador de ordenação */}
+                            {sorting[0]?.id === header.id && (sorting[0].desc ? " ↓" : " ↑")}
+                          </div>
+                        </TableHead>
                       ))}
 
-                      <TableCell className="w-2.5">
-                        <div className="flex gap-2">
-                          <CoreButtonComponent
-                            className="h-2 w-2 hover:text-orange-500"
-                            variant={null}
-                            onClick={() => onEdit?.(row.original as TData)}
-                          >
-                            <IconEdit />
-                          </CoreButtonComponent>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  ))}
+                </TableHeader>
 
-                          <CoreButtonComponent
-                            className="h-2 w-2 hover:text-red-500"
-                            variant={null}
-                            onClick={() => onDelete?.(row.original as TData)}
-                          >
-                            <IconTrash />
-                          </CoreButtonComponent>
-                        </div>
+                <TableBody>
+                  {table.getRowModel().rows.length > 0 ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id} className="hover:bg-muted/50">
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {(() => {
+                              const colDef: any = cell.column.columnDef;
+                              const rawValue = cell.getValue() as string | number;
+
+                              if (colDef.field) {
+                                if (["text", "number"].includes(colDef.field.type)) {
+                                  const fieldKey = colDef.accessorKey ?? colDef.id;
+
+                                  return (
+                                    <CoreInputTextComponent
+                                      control={tableForm.control}
+                                      name={`rows.${row.id}.${String(fieldKey)}` as any}
+                                      defaultValue={rawValue ?? ""}
+                                      {...colDef.field}
+                                    />
+                                  );
+                                }
+                              }
+
+                              if (colDef.keyValue && rawValue !== undefined && rawValue !== null) {
+                                return colDef.keyValue[rawValue] ?? rawValue;
+                              }
+
+                              return flexRender(colDef.cell, cell.getContext());
+                            })()}
+                          </TableCell>
+                        ))}
+
+                        <TableCell className="w-2.5">
+                          <div className="flex gap-2">
+                            <CoreButtonComponent
+                              className="h-2 w-2 hover:text-orange-500"
+                              variant={null}
+                              onClick={() => onEdit?.(row.original as TData)}
+                            >
+                              <IconEdit />
+                            </CoreButtonComponent>
+
+                            <CoreButtonComponent
+                              className="h-2 w-2 hover:text-red-500"
+                              variant={null}
+                              onClick={() => onDelete?.(row.original as TData)}
+                            >
+                              <IconTrash />
+                            </CoreButtonComponent>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                        Nenhum resultado encontrado.
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                      Nenhum resultado encontrado.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-
-          {/* Paginação */}
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Mostrando {data.length} de {totalRecords} resultados
+                  )}
+                </TableBody>
+              </Table>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                className="px-3 py-1 rounded border disabled:opacity-50 cursor-pointer hover:bg-muted"
-                onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
-                disabled={pagination.pageIndex === 0}
-              >
-                Anterior
-              </button>
+            {/* Paginação */}
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                Mostrando {data.length} de {totalRecords} resultados
+              </div>
 
-              <span className="text-sm">
-                Página {pagination.pageIndex + 1} de {pageCount || 1}
-              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  className="px-3 py-1 rounded border disabled:opacity-50 cursor-pointer hover:bg-muted"
+                  onClick={() => setPagination({ ...pagination, pageIndex: Math.max(0, pagination.pageIndex - 1) })}
+                  disabled={pagination.pageIndex === 0}
+                >
+                  Anterior
+                </button>
 
-              <button
-                className="px-3 py-1 rounded border disabled:opacity-50 cursor-pointer hover:bg-muted"
-                onClick={() =>
-                  setPagination({ ...pagination, pageIndex: Math.min(pageCount - 1, pagination.pageIndex + 1) })
-                }
-                disabled={pagination.pageIndex >= pageCount - 1}
-              >
-                Próxima
-              </button>
+                <span className="text-sm">
+                  Página {pagination.pageIndex + 1} de {pageCount || 1}
+                </span>
+
+                <button
+                  className="px-3 py-1 rounded border disabled:opacity-50 cursor-pointer hover:bg-muted"
+                  onClick={() =>
+                    setPagination({ ...pagination, pageIndex: Math.min(pageCount - 1, pagination.pageIndex + 1) })
+                  }
+                  disabled={pagination.pageIndex >= pageCount - 1}
+                >
+                  Próxima
+                </button>
+              </div>
             </div>
-          </div>
+          </Form>
         </>
       )}
     </div>

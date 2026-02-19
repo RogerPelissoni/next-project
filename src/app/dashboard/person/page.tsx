@@ -1,5 +1,6 @@
 "use client";
 
+import { Separator } from "@/components/ui/separator";
 import { API_ENDPOINTS } from "@/constants/api.constants";
 import { RESOURCES } from "@/constants/resources.constants";
 import CoreCrudBuilderComponent from "@/core/components/CoreCrudBuilderComponent";
@@ -7,10 +8,9 @@ import { CoreScreenWrapper } from "@/core/components/CoreScreenWrapper";
 import { CoreFormProvider } from "@/core/form/CoreFormProvider";
 import { useScreenData } from "@/core/hooks/useScreenData";
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
-import { useCoreTable } from "@/core/table/useCoreTable";
 import { initPersonResource, PERSON_RESOURCE_QUERY } from "@/resources/person.resource";
 import { PersonPageContentProps, PersonScreenData } from "@/types/person.types";
-import { useEffect } from "react";
+import { useMemo } from "react";
 
 export default function PersonPage() {
   const { data, loading, error } = useScreenData<PersonScreenData>(API_ENDPOINTS.PERSON.SCREEN, {
@@ -19,33 +19,28 @@ export default function PersonPage() {
 
   return (
     <CoreScreenWrapper data={data} loading={loading} error={error} validateData={(data) => !!data?.obPerson}>
-      {(screenData) => {
-        const rsPerson = initPersonResource();
-
-        return (
-          <CoreTableProvider
-            resource={RESOURCES.PERSON.key}
-            queryResources={PERSON_RESOURCE_QUERY}
-            columns={rsPerson.tableColumns}
-            filterConfig={rsPerson.tableFilters}
-            setInitialData={false}
-          >
-            <PersonPageContent rsPerson={rsPerson} obPerson={screenData.obPerson} />
-          </CoreTableProvider>
-        );
-      }}
+      {(screenData) => <PersonScreen screenData={screenData} />}
     </CoreScreenWrapper>
   );
 }
 
-function PersonPageContent({ rsPerson, obPerson }: PersonPageContentProps) {
-  const coreTable = useCoreTable();
+export function PersonScreen({ screenData }: { screenData: PersonScreenData }) {
+  const rsPerson = useMemo(() => initPersonResource(), []);
 
-  useEffect(() => {
-    coreTable.setData(obPerson.data);
-    coreTable.setTotalRecords(obPerson.total);
-  }, []);
+  return (
+    <CoreTableProvider
+      resource={RESOURCES.PERSON.key}
+      queryResources={PERSON_RESOURCE_QUERY}
+      columns={rsPerson.tableColumns}
+      filterConfig={rsPerson.tableFilters}
+      initialData={screenData.obPerson}
+    >
+      <PersonPageContent rsPerson={rsPerson} />
+    </CoreTableProvider>
+  );
+}
 
+export function PersonPageContent({ rsPerson }: PersonPageContentProps) {
   return (
     <CoreFormProvider
       resource={RESOURCES.PERSON.key}
@@ -54,7 +49,16 @@ function PersonPageContent({ rsPerson, obPerson }: PersonPageContentProps) {
       initialState={rsPerson.formStateInitial}
       formFields={rsPerson.formFields}
     >
-      <CoreCrudBuilderComponent />
+      <CoreCrudBuilderComponent
+        templateFormBottom={
+          <>
+            <Separator />
+            <div className="w-full">
+              <h2>Aqui vai a table detalhe do pessoaTelefone</h2>
+            </div>
+          </>
+        }
+      />
     </CoreFormProvider>
   );
 }

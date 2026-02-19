@@ -30,6 +30,7 @@ export interface TableColumnSingle<TFields> {
   accessorKey: TFields;
   header: string;
   keyValue?: KeyValueType;
+  field?: Omit<FieldInterface, "label">;
 }
 
 // ===== tableFilters =====

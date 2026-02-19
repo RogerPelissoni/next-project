@@ -7,12 +7,17 @@ import { QuerySchemaType, TableFiltersInterface } from "../utils/resource.util";
 import { makeTableQueryParams } from "../utils/table.util";
 import { ColumnFilter, CoreTableContext, PaginationState } from "./CoreTableContext";
 
+interface InitialData<T> {
+  data: T[];
+  total: number;
+}
+
 interface Props<T> {
   resource: string;
   queryResources?: QuerySchemaType;
   columns: ColumnDef<T>[];
   filterConfig?: TableFiltersInterface<any>;
-  setInitialData?: boolean;
+  initialData?: InitialData<T>;
   children: ReactNode;
 }
 
@@ -21,16 +26,16 @@ export function CoreTableProvider<T>({
   queryResources,
   columns,
   filterConfig,
-  setInitialData = true,
+  initialData = undefined,
   children,
 }: Props<T>) {
-  const [data, setData] = useState<T[]>([]);
+  const [data, setData] = useState<T[]>(initialData?.data ?? []);
   const [loading, setLoading] = useState(false);
-  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(initialData?.total ?? 0);
   const [filters, setFilters] = useState<ColumnFilter[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
   const [sorting, setSorting] = useState<Array<{ id: string; desc: boolean }>>([]);
-  const [skipInitialLoad, setSkipInitialLoad] = useState(true);
+  const [autoLoadData, setAutoLoadData] = useState(!initialData);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -46,11 +51,9 @@ export function CoreTableProvider<T>({
   }, [resource, pagination, filters, sorting]);
 
   useEffect(() => {
-    if (!setInitialData) {
-      if (skipInitialLoad) {
-        setSkipInitialLoad(false);
-        return;
-      }
+    if (!autoLoadData) {
+      setAutoLoadData(true);
+      return;
     }
 
     loadData();
