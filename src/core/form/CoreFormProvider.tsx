@@ -23,12 +23,15 @@ export function CoreFormProvider<T extends Record<string, any>>({
 }: Props<T>) {
   const [formState, setFormState] = useState<T>(initialState);
 
-  const updateForm = (data: Partial<T>) => {
-    setFormState((prev) => ({ ...prev, ...data }));
+  const setForm = (value: Partial<T> | ((prev: T) => T)) => {
+    setFormState((prev) => {
+      if (typeof value === "function") return value(prev);
+      return { ...prev, ...value };
+    });
   };
 
   const setField = (key: keyof T, value: any) => {
-    updateForm({ [key]: value } as Partial<T>);
+    setForm({ [key]: value } as Partial<T>);
   };
 
   const resetForm = () => {
@@ -37,7 +40,7 @@ export function CoreFormProvider<T extends Record<string, any>>({
 
   const value: CoreFormContextType<T> = {
     formState,
-    setFormState: updateForm,
+    setFormState: setForm,
     setField,
     reset: resetForm,
     formFields,

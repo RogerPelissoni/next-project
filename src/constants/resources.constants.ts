@@ -15,7 +15,7 @@ export const RESOURCES = {
     singular: "Pessoa",
   },
   PERSON_PHONE: {
-    key: "person_phone",
+    key: "personPhone",
     title: "Telefones",
     singular: "Telefone",
   },

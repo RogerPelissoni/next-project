@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { TableFiltersInterface } from "@/core/types/core.types";
+import { createContext } from "react";
+import { TableFiltersInterface } from "../utils/resource.util";
 
 export interface PaginationState {
   pageIndex: number;
@@ -17,7 +17,7 @@ export interface ColumnFilter {
 
 export interface CoreTableContextType<T> {
   data: T[];
-  setData: React.Dispatch<React.SetStateAction<T[]>>;
+  setData: (data: T[]) => void;
 
   resource: string;
   reload: () => Promise<void>;
@@ -25,14 +25,14 @@ export interface CoreTableContextType<T> {
   loading: boolean;
 
   totalRecords: number;
-  setTotalRecords: React.Dispatch<React.SetStateAction<number>>;
+  setTotalRecords: (total: number) => void;
 
   columns: ColumnDef<T>[];
 
   filters: ColumnFilter[];
   setFilters: React.Dispatch<React.SetStateAction<ColumnFilter[]>>;
 
-  filterConfig?: TableFiltersInterface;
+  filterConfig?: TableFiltersInterface<any>;
 
   pagination: PaginationState;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;

@@ -8,7 +8,6 @@ import { CoreFormProvider } from "../form/CoreFormProvider";
 import { useSwalConfirm } from "../providers/ConfirmDialogProvider";
 import { CoreTableComponent } from "../table/CoreTableComponent";
 import { CoreTableProvider } from "../table/CoreTableProvider";
-import { useCoreTable } from "../table/useCoreTable";
 import CoreButtonComponent from "./CoreButtonComponent";
 import CoreFormComponent from "./CoreFormComponent";
 import CoreModalComponent from "./CoreModalComponent";
@@ -28,10 +27,7 @@ export default function CoreTableDetailComponent({ rsConfig, rsKey }: Props) {
       resource={RESOURCES[rsKey].key}
       columns={rsConfig.tableColumns}
       autoLoad={false}
-      initialData={{
-        data: coreForm.formState.person_phone ?? [],
-        total: coreForm.formState.person_phone?.length,
-      }}
+      externalData={coreForm.formState[RESOURCES[rsKey].key]}
     >
       <CoreFormProvider
         resource={RESOURCES[rsKey].key}
@@ -40,17 +36,16 @@ export default function CoreTableDetailComponent({ rsConfig, rsKey }: Props) {
         initialState={rsConfig.formStateInitial}
         formFields={rsConfig.formFields}
       >
-        <MainContent rsKey={rsKey} />
+        <MainContent rsKey={rsKey} coreForm={coreForm} />
       </CoreFormProvider>
     </CoreTableProvider>
   );
 }
 
-function MainContent({ rsKey }: { rsKey: keyof typeof RESOURCES }) {
+function MainContent({ rsKey, coreForm }: { rsKey: keyof typeof RESOURCES; coreForm: any }) {
   const [openModal, setOpenModal] = useState(false);
 
   const keySubResource = RESOURCES[rsKey].key;
-  const coreTableSub = useCoreTable();
   const coreFormSub = useCoreForm();
   const swalConfirm = useSwalConfirm();
 
@@ -64,7 +59,7 @@ function MainContent({ rsKey }: { rsKey: keyof typeof RESOURCES }) {
     setOpenModal(true);
   }
 
-  async function handleDelete(formState: any, rowIndex: number) {
+  async function handleDelete(_: any, rowIndex: number) {
     const confirmed = await swalConfirm({
       title: "Deseja remover o registro?",
       description: "Esta ação é irreversível.",
@@ -75,30 +70,25 @@ function MainContent({ rsKey }: { rsKey: keyof typeof RESOURCES }) {
 
     if (!confirmed) return;
 
-    coreTableSub.setData(coreTableSub.data.filter((v, i) => i !== rowIndex));
+    coreForm.setFormState((prev: any) => ({
+      ...prev,
+      [keySubResource]: prev[keySubResource].filter((_: any, i: number) => i !== rowIndex),
+    }));
   }
 
   function onSubmit(formPayload: any) {
     const isUpdate = !!formPayload?.id;
-    const currentData = coreTableSub.data;
 
     if (isUpdate) {
-      const newData = currentData.map((item) => (item.id === formPayload.id ? formPayload : item));
-
-      coreTableSub.setData([...newData]);
-      coreTableSub.setTotalRecords(newData.length);
-    } else {
-      const newRegister = {
-        id: `fake_${crypto.randomUUID()}`,
-        ...formPayload,
-      };
-
-      coreFormSub.setFormState((prev: any) => ({
+      coreForm.setFormState((prev: any) => ({
         ...prev,
-        [keySubResource]: [...(prev[keySubResource] ?? []), newRegister],
+        [keySubResource]: prev[keySubResource].map((item: any) => (item.id === formPayload.id ? formPayload : item)),
       }));
-
-      coreTableSub.setData([...currentData, newRegister]);
+    } else {
+      coreForm.setFormState((prev: any) => ({
+        ...prev,
+        [keySubResource]: [...(prev[keySubResource] ?? []), { id: `fake_${crypto.randomUUID()}`, ...formPayload }],
+      }));
     }
 
     setOpenModal(false);

@@ -33,14 +33,14 @@ export default function CoreCrudBuilderComponent({
 
   const onSubmitForm = async (formState: any) => {
     try {
-      const isUpdateMethod = !!formState.id;
+      const isUpdateMethod = !!coreForm.formState.id;
 
-      if (fnBeforeSubmitForm) fnBeforeSubmitForm(formState);
+      if (fnBeforeSubmitForm) fnBeforeSubmitForm(coreForm.formState);
 
       if (isUpdateMethod) {
-        await http.patch(coreForm.resource, formState);
+        await http.patch(coreForm.resource, coreForm.formState);
       } else {
-        await http.post(coreForm.resource, formState);
+        await http.post(coreForm.resource, coreForm.formState);
       }
 
       setIsOpenForm(false);
