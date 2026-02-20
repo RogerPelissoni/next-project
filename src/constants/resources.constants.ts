@@ -3,25 +3,26 @@ export const RESOURCES = {
     key: "user",
     title: "Usuários",
     singular: "Usuário",
-    description: "Gerenciamento de usuários do sistema",
   },
   COMPANY: {
     key: "company",
     title: "Empresas",
     singular: "Empresa",
-    description: "Gerenciamento de empresas",
   },
   PERSON: {
     key: "person",
     title: "Pessoas",
     singular: "Pessoa",
-    description: "Gerenciamento de pessoas",
+  },
+  PERSON_PHONE: {
+    key: "person_phone",
+    title: "Telefones",
+    singular: "Telefone",
   },
   PROFILE: {
     key: "profile",
     title: "Perfis",
     singular: "Perfil",
-    description: "Gerenciamento de perfis de acesso",
   },
 } as const;
 

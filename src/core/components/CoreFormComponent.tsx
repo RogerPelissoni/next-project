@@ -78,24 +78,25 @@ export default function CoreFormComponent<TFieldValues extends FieldValues>({
     }
   };
 
+  // TODO: Deve ser ajustado, está fixado main, deve conter mais um loop
+
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className={`flex flex-wrap items-start space-y-4 mt-4 ${className ?? ""}`}
-      >
-        {keys.map((key) => renderField(key, coreForm.formFields.main.fields[key]))}
+    <div>
+      <Form {...form}>
+        <form className={`flex flex-wrap items-start space-y-4 mt-4 ${className ?? ""}`}>
+          {keys.map((key) => renderField(key, coreForm.formFields.main.fields[key]))}
+        </form>
+      </Form>
 
-        {templateBottom}
+      {templateBottom}
 
-        <Separator className="w-full my-2 mb-4" />
+      <Separator className="w-full my-2 mb-4" />
 
-        <div className="w-full flex justify-end">
-          <CoreButtonComponent type="submit">
-            <IconSave /> {submitButtonText}
-          </CoreButtonComponent>
-        </div>
-      </form>
-    </Form>
+      <div className="w-full flex justify-end">
+        <CoreButtonComponent type="submit" onClick={form.handleSubmit(handleSubmit)}>
+          <IconSave /> {submitButtonText}
+        </CoreButtonComponent>
+      </div>
+    </div>
   );
 }

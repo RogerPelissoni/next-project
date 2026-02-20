@@ -11,7 +11,14 @@ type CoreButtonProps = {
   onClick?: () => void;
 };
 
-export default function CoreButtonComponent({ children, className, size = "sm", type, variant = "default", onClick }: CoreButtonProps) {
+export default function CoreButtonComponent({
+  children,
+  className,
+  size = "sm",
+  type = "button",
+  variant = "default",
+  onClick,
+}: CoreButtonProps) {
   return (
     <Button className={className} size={size} type={type} variant={variant} onClick={onClick}>
       {children}

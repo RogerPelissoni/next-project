@@ -1,15 +1,16 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
 import { API_ENDPOINTS } from "@/constants/api.constants";
 import { RESOURCES } from "@/constants/resources.constants";
 import CoreCrudBuilderComponent from "@/core/components/CoreCrudBuilderComponent";
 import { CoreScreenWrapper } from "@/core/components/CoreScreenWrapper";
+import CoreTableDetailComponent from "@/core/components/CoreTableDetailComponent";
 import { CoreFormProvider } from "@/core/form/CoreFormProvider";
 import { useScreenData } from "@/core/hooks/useScreenData";
 import { CoreTableProvider } from "@/core/table/CoreTableProvider";
 import { initPersonResource, PERSON_RESOURCE_QUERY } from "@/resources/person.resource";
-import { PersonPageContentProps, PersonScreenData } from "@/types/person.types";
+import { initPersonPhoneResource } from "@/resources/personPhone.resource";
+import { PersonScreenData } from "@/types/person.types";
 import { useMemo } from "react";
 
 export default function PersonPage() {
@@ -24,8 +25,9 @@ export default function PersonPage() {
   );
 }
 
-export function PersonScreen({ screenData }: { screenData: PersonScreenData }) {
+function PersonScreen({ screenData }: { screenData: PersonScreenData }) {
   const rsPerson = useMemo(() => initPersonResource(), []);
+  const rsPersonPhone = useMemo(() => initPersonPhoneResource(), []);
 
   return (
     <CoreTableProvider
@@ -35,30 +37,17 @@ export function PersonScreen({ screenData }: { screenData: PersonScreenData }) {
       filterConfig={rsPerson.tableFilters}
       initialData={screenData.obPerson}
     >
-      <PersonPageContent rsPerson={rsPerson} />
+      <CoreFormProvider
+        resource={RESOURCES.PERSON.key}
+        title={RESOURCES.PERSON.title}
+        schema={rsPerson.schema}
+        initialState={rsPerson.formStateInitial}
+        formFields={rsPerson.formFields}
+      >
+        <CoreCrudBuilderComponent
+          templateFormBottom={<CoreTableDetailComponent rsConfig={rsPersonPhone} rsKey="PERSON_PHONE" />}
+        />
+      </CoreFormProvider>
     </CoreTableProvider>
-  );
-}
-
-export function PersonPageContent({ rsPerson }: PersonPageContentProps) {
-  return (
-    <CoreFormProvider
-      resource={RESOURCES.PERSON.key}
-      title={RESOURCES.PERSON.title}
-      schema={rsPerson.schema}
-      initialState={rsPerson.formStateInitial}
-      formFields={rsPerson.formFields}
-    >
-      <CoreCrudBuilderComponent
-        templateFormBottom={
-          <>
-            <Separator />
-            <div className="w-full">
-              <h2>Aqui vai a table detalhe do pessoaTelefone</h2>
-            </div>
-          </>
-        }
-      />
-    </CoreFormProvider>
   );
 }

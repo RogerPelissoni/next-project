@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { FormFieldsInterface } from "../types/core.types";
+import { FormFieldsInterface } from "../utils/resource.util";
 
 export interface CoreFormContextType<T extends Record<string, any> = any> {
   formState: T;
@@ -9,8 +9,7 @@ export interface CoreFormContextType<T extends Record<string, any> = any> {
   setFormState: (data: Partial<T>) => void;
   setField: (key: keyof T, value: any) => void;
   reset: () => void;
-
-  formFields: FormFieldsInterface<any, T>;
+  formFields: FormFieldsInterface<any, any>;
   schema: any;
   resource: string;
   title: string;

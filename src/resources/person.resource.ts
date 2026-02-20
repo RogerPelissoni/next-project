@@ -27,7 +27,7 @@ export const PERSON_RESOURCE_QUERY = makePersonQueryResources({
     "fl_active",
   ],
   appends: [],
-  hydrators: [],
+  hydrators: ['personPhone'],
 });
 
 export const initPersonResource = () => {
@@ -35,7 +35,7 @@ export const initPersonResource = () => {
 
   const tableColumns: TableColumnInterface<PersonQueryFields> = [
     { accessorKey: "id", header: "#" },
-    { accessorKey: "name", header: "Nome", field: { type: "text" } },
+    { accessorKey: "name", header: "Nome" },
     { accessorKey: "ds_document", header: "Documento" },
     { accessorKey: "ds_email", header: "Email" },
     { accessorKey: "ds_phone", header: "Telefone" },

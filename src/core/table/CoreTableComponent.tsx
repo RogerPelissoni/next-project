@@ -18,7 +18,7 @@ import { useCoreTable } from "./useCoreTable";
 
 export type CoreTableComponentProps<TData> = {
   onEdit?: (record: TData) => void;
-  onDelete?: (record: TData) => void;
+  onDelete?: (record: TData, index: number) => void;
 };
 
 export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableComponentProps<TData>) {
@@ -304,7 +304,7 @@ export function CoreTableComponent<TData>({ onEdit, onDelete }: CoreTableCompone
                             <CoreButtonComponent
                               className="h-2 w-2 hover:text-red-500"
                               variant={null}
-                              onClick={() => onDelete?.(row.original as TData)}
+                              onClick={() => onDelete?.(row.original as TData, row.index)}
                             >
                               <IconTrash />
                             </CoreButtonComponent>

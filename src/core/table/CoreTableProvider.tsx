@@ -17,6 +17,7 @@ interface Props<T> {
   queryResources?: QuerySchemaType;
   columns: ColumnDef<T>[];
   filterConfig?: TableFiltersInterface<any>;
+  autoLoad?: boolean;
   initialData?: InitialData<T>;
   children: ReactNode;
 }
@@ -26,6 +27,7 @@ export function CoreTableProvider<T>({
   queryResources,
   columns,
   filterConfig,
+  autoLoad = true,
   initialData = undefined,
   children,
 }: Props<T>) {
@@ -51,6 +53,8 @@ export function CoreTableProvider<T>({
   }, [resource, pagination, filters, sorting]);
 
   useEffect(() => {
+    if (!autoLoad) return;
+    
     if (!autoLoadData) {
       setAutoLoadData(true);
       return;

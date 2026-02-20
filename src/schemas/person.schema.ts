@@ -26,6 +26,15 @@ export const personSchema = z.object({
 export type PersonFormSchema = z.infer<typeof personSchema>;
 type PersonSchemaKeys = keyof z.infer<typeof personSchema>;
 
+export const personPhoneSchema = z.object({
+  id: z.string().optional(),
+  person_id: z.string().optional(),
+  ds_phone: z.string().min(8).max(20),
+});
+
+export type PersonPhoneFormSchema = z.infer<typeof personPhoneSchema>;
+type PersonPhoneSchemaKeys = keyof z.infer<typeof personPhoneSchema>;
+
 export const PERSON_QUERY_SCHEMA = {
   fields: {
     id: {},
