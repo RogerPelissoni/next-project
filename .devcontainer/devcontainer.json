@@ -1,0 +1,34 @@
+{
+  "name": "Next Project (newstack-docker)",
+  "dockerComposeFile": [
+    "../../newstack-docker/docker-compose.yml"
+  ],
+  "service": "frontend",
+  "runServices": [
+    "db",
+    "backend",
+    "frontend"
+  ],
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": false,
+  "mounts": [
+    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+  ],
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/ssh-agent"
+  },
+  "forwardPorts": [
+    3000,
+    8000,
+    3306
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}
